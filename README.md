@@ -6,3 +6,5 @@ MagicProject.pdf is a report I cowrote comparing two machine learning algorithms
 MagicProject.rmd is the RMarkdown file which produces MagicProject.pdf. 
 
 Check github.com/TedTinker/DataMining for more projects from this data mining course.
+
+Or, check https://tedtinker.github.io for the website built from this repository: github.com/TedTinker/TedTinker.github.io
