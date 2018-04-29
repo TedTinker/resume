@@ -9,4 +9,4 @@ MagicProject.rmd is the RMarkdown file which produces MagicProject.pdf.
 
 Check github.com/TedTinker/DataMining for more projects from this data mining course.
 
-Or, check https://tedtinker.github.io for the website I built (github.com/TedTinker/TedTinker.github.io) for BugFlipper, a Python plug-in I wrote for the Cheadle Center for Biodiversity and Ecological Restoration. 
+Or, check tedtinker.github.io/BugFlipper for the website I built (github.com/TedTinker/TedTinker.github.io) for BugFlipper, a Python plug-in I wrote for the Cheadle Center for Biodiversity and Ecological Restoration. 
