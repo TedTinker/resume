@@ -11,4 +11,4 @@ Senior_Thesis.pdf is my forty-page report on De Bruijn sequences. I advance the 
 
 Senior_Thesis is the LaTeX file which produces Senior_Thesis.pdf.
 
-Also check tedtinker.github.io/BugFlipper for the website I built (github.com/TedTinker/TedTinker.github.io) for BugFlipper, a Python plug-in I wrote for the Cheadle Center for Biodiversity and Ecological Restoration. 
+Also check tedtinker.github.io/BugFlipper for the website I built for BugFlipper, a Python plug-in I wrote for the Cheadle Center for Biodiversity and Ecological Restoration. 
