@@ -11,4 +11,6 @@ Senior_Thesis.pdf is my forty-page report on De Bruijn sequences. I advance the 
 
 Senior_Thesis is the LaTeX file which produces Senior_Thesis.pdf.
 
+Witch_Trial_Project is a forty-page pdf about a database of scottish witchtrials I made in SQL Server Management Studio.
+
 Also check tedtinker.github.io/BugFlipper for the website I built for BugFlipper, a Python plug-in I wrote for the Cheadle Center for Biodiversity and Ecological Restoration. 
