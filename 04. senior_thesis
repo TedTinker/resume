@@ -1,0 +1,2726 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{mathtools}
+\usepackage{soul}
+\widowpenalty=10000
+\usepackage{microtype}
+\usepackage{caption}
+\usepackage{xcolor}
+\usepackage{float}
+\usepackage{mathdots}
+\usepackage[pass]{geometry}
+
+\newtheorem{Lemma}{Lemma}
+
+\newtheorem{Remark}{Remark}
+
+\newtheorem{Example}{Example}
+
+\newtheorem{Theorem}{Theorem}
+
+\newtheorem{Rule}{Rule}
+
+\theoremstyle{definition}
+\newtheorem{Definition}{Definition}
+
+\title{De Bruijn Sequences of Higher Dimension}
+\author{Professor Karel Casteels, Ted Tinker}
+\date{}
+
+\begin{document}
+
+\maketitle
+\sloppy
+
+\noindent
+\section*{Abstract}
+
+De Bruijn sequences are objects from discrete math relating to combinatorics, especially graph theory. This paper briefly reviews an algorithm for generating De Bruijn sequences before discussing De Bruijn torii, which extend the properties of De Bruijn sequences to two dimensions. De Bruijn sequences and torii have applications in fields as diverse as ``robotic vision, location detection, and projective touch-screen displays''\cite{Location}, ``pseudo-random arrays, and the design of mask configurations for spectrometers''\cite{Sequences}, magic tricks, ATM cracking, DNA sequencing, and digital paper\cite{Genetics}.
+
+\null 
+
+\noindent
+This paper explores the complexity of De Bruijn torii through an example. We then outline a construction method for producing objects exhibiting the De Bruijn property in three dimensions. Then we extend the construction inductively to prove that analogues to De Bruijn sequences exist for every finite number of dimensions.
+
+\null 
+
+\noindent
+Finally we speculate at some implications of this finding on applications of De Bruijn sequences and torii.
+
+
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%
+
+\clearpage
+\tableofcontents
+\clearpage
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Introduction}
+
+De Bruijn sequences are objects from discrete math relating to combinatorics, especially graph theory. An example of a De Bruijn sequence is the cycle $(000111212220101200202102211)$ which exhibits the property of containing every 3-length combination of the elements $\{0,1,2\}$ precisely once, and nothing else:
+
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=1]{Dial.png}
+\caption{A visual example of a De Bruijn sequence}
+\label{firstFig}
+\end{figure}
+
+\noindent
+De Bruijn torii extend the properties of De Bruijn sequences to two dimensions. De Bruijn sequences and torii have applications in fields as diverse as ``robotic vision, location detection, and projective touch-screen displays''\cite{Location}, ``pseudo-random arrays, and the design of mask configurations for spectrometers''\cite{Sequences}, magic tricks, ATM cracking, DNA sequencing, and digital paper\cite{Genetics}. 
+
+\null 
+
+\noindent
+We first propose to explore the complexity of De Bruijn torii through example. Just as De Bruijn sequences are cyclic, De Bruijn torii will `loop' horizontally (first column to last) and vertically (first row to last); we will formalize the notion of a matrix shaped like a torus to facilitate discussion of these objects.
+
+\null 
+
+\noindent
+Then we will outline a construction method for producing objects exhibiting the De Bruijn property in three dimensions. The construction method will suggest a lower bound for the quantity of these objects. Then we will extend the construction inductively to prove that analogues to De Bruijn sequences exist for every finite number of dimensions.
+
+\null 
+
+\noindent
+Finally we speculate at some implications of this finding on applications of De Bruijn sequences and torii. 
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\clearpage
+\section{Background}
+
+\subsection{De Bruijn Sequences}
+
+There are several conceptually equivalent notations for De Bruijn sequences, so we here declare our own preferring clarity over compactness for consistency in higher dimensions.
+
+\null 
+
+\begin{Definition}
+Given positive integers $j$ and $n$, a \emph{De Bruijn sequence of $j$-length $n$-sequences} is a cycle containing precisely one copy of each $j$-length sequence of the elements $\{0, 1, 2, \dots, n-1\}$ as a subsequence.
+\end{Definition}
+
+\null 
+
+\noindent
+$(000111212220101200202102211)$ is a De Bruijn sequence of 3-length 3-sequences. Informally this means that when written in a circle and viewed three consecutive digits at a time, every 3-length sequence of the elements in $\{0, 1, 2\}$ will be displayed precisely once in each rotation.
+
+\begin{figure}[H]
+  \begin{center}
+  \includegraphics[scale=1]{Dial.png}
+  \caption{A visual example of a De Bruijn sequence (copied from figure 1)}
+  \label{Dial2}
+  \end{center}
+\end{figure}
+
+\noindent
+On the next page, we demonstrate the method used to construct this De Bruijn sequence of 3-length 3-sequences. Though we will not prove this here, the methodology can be extended inductively to produce De Bruijn sequences for any positive integers $j$ and $n$\cite{Construction}.
+
+\clearpage 
+
+\noindent
+Create a graph with nine nodes representing all length-2 sequences of elements in $\{0,1,2\}$. For $a,b \in \{0,1,2\}$, connect node $(ab)$ to nodes $(b0)$, $(b1)$, and $(b2)$ with arrows, or directed edges.
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=.9]{FirstGraph.png}
+\caption{A graph describing possible relations between 2-length 3-sequences}
+\label{arrows}
+\end{figure}
+
+\noindent
+The graph in figure \ref{arrows} is balanced, meaning every node has exactly as many arrows entering as exiting. Balanced graphs have at least one Eulerian path, a circuit which follows each arrow precisely once. The graph's Eulerian paths represent De Bruijn sequences of 3-length 3-sequences. The red circuit in figure \ref{cycle} below represents the De Bruijn sequence introduced in figure \ref{firstFig} and figure \ref{Dial2}.
+
+\begin{figure}[h!]
+\centering
+\includegraphics[scale=.9]{SecondGraph.png}
+\caption{The Eulerian path representing (000111212220101200202102211)}
+\label{cycle}
+\end{figure}
+
+\noindent
+Figure \ref{arrows} is an example of a De Bruijn graph, and the theory behind such graphs can be inductively extended to produce De Bruijn sequences for any positive integers $j$ and $n$\cite{Construction}.
+
+\null 
+
+\noindent
+The intuitive generalization of the cyclic De Bruijn sequence to two dimensions requires the notion of a matrix shaped like a torus. We will call such an object a toroidal array, using the word array to refer to multidimensional collections of elements with the intention to later define hyper-toroidal arrays. 
+
+
+
+\subsection{The Toroidal Array}
+\vspace{-1mm}
+
+For consistency with later sections and for intuitive use of the modulus function, index rows and columns of matrices beginning from 0 rather than 1.
+
+\null 
+\vspace{-1mm}
+
+\begin{Definition}
+An \emph{$m\times n$ Toroidal Array} is an equivalence class of $m \times n$ matrices under the relation $A \approx B$ if $A$ and $B$ are both $m \times n$ matrices and there exist integers $x$ and $y$ with $0 \leq x < m$ and $0 \leq y < n$ such that for all entries of $A$ and $B$, $A_{i,j} = B_{k,l}$ with $k = i + x \text{ mod } m$ and $l = j + y \text{ mod } n$. \end{Definition}
+
+\null 
+\vspace{-1mm}
+
+\noindent
+For example, suppose
+
+$$A = \begin{bmatrix}
+1 & 1 & 1\\
+1 & 0 & 0\\
+1 & 0 & 0\\
+\end{bmatrix}, \quad B = \begin{bmatrix}
+1 & 0 & 0\\
+1 & 0 & 0\\
+1 & 1 & 1\\
+\end{bmatrix}, \quad C = \begin{bmatrix}
+0 & 1 & 0\\
+1 & 1 & 1\\
+0 & 1 & 0\\
+\end{bmatrix}.$$
+
+\null 
+
+\noindent
+$A, B,$ and $C$ are $3 \times 3$ matrices. $A_{i,j} = B_{k,l}$ with $k = i + 2 \text{ mod } 3$ and $l = j$, while $A_{i,j} = C_{k,l}$ with $k = i + 1 \text{ mod } 3$ and $l = j + 1 \text{ mod } 3$. Therefore $A$, $B$, and $C$ are equivalent as representations of the same $3 \times 3$ toroidal array. Referring to this toroidal array as $[A]$, we may write $A,B,C \in [A]$. 
+
+\null 
+\vspace{-1mm}
+
+\begin{Definition}
+An $m \times n$ toroidal array $[A]$ \emph{contains} a $k \times l$ matrix $B$ (with $k \leq m, l \leq n$) if there exists a matrix $A \in [A]$ so $\underset{\substack{0 \leq i < k,\\ 0 \leq j < l}}{A_{i,j}} = B_{i,j}$. If $A$ is the only matrix satisfying this property in $[A]$, then $[A]$ contains $B$ \emph{precisely once.}
+\end{Definition}
+\vspace{-1mm}
+
+
+\subsection{De Bruijn Arrays}
+
+Now that the necessary definitions are in place, we may focus on a specific, well-known case of the $2D$ De Bruijn object to demonstrate their complexity.
+
+\null 
+\vspace{-1mm}
+
+\begin{Definition}
+A \emph{$4 \times 4$ De Bruijn array of $2 \times 2$ 0-1 sub-matrices} is a $4 \times 4$ toroidal array which contains every $2 \times 2$ 0-1 matrix precisely once.
+\end{Definition}
+
+\null 
+\vspace{-1mm}
+
+\noindent
+Theorem 2 will prove the toroidal arrays represented in figure \ref{clocks} are the \textit{only} $4 \times 4$ De Bruijn arrays of $2 \times 2$ 0-1 sub-matrices. For ease of reference in text denote them the ``Clockwise'' and ``Counterclockwise'' arrays, respectively. 
+
+\vspace{-2mm}
+\begin{figure}[H]
+    \centering
+    $$\begin{bmatrix}
+0 & 1 & 0 & 0\\
+0 & 1 & 1 & 1\\
+1 & 1 & 1 & 0\\
+0 & 0 & 1 & 0\\
+\end{bmatrix} \quad \quad \quad \begin{bmatrix}
+0 & 0 & 1 & 0\\
+1 & 1 & 1 & 0\\
+0 & 1 & 1 & 1\\
+0 & 1 & 0 & 0\\
+\end{bmatrix}$$
+\vspace{-2mm}
+    \caption{The Clockwise and Counterclockwise arrays}
+    \label{clocks}
+\end{figure}
+\vspace{-1mm}
+
+\noindent
+The challenge of proving the uniqueness of these arrays calls for new notation.
+
+\subsubsection{Sub-Matrix Mapping}
+
+\noindent
+Given $m \times n$ toroidal array $[A]$ and any $m \times n$ matrix $A \in [A]$, generate $2m \times 2n$ matrix $B$ such that $\underset{\substack{0 \leq i< 2m,\\0 \leq j < 2n}}{B_{i,j}} = A_{k,l}$, with 
+
+\null 
+
+$$k = \left\lceil \frac{i}{2} \right\rceil \text{ mod } m \quad \text{and} \quad l = \left\lceil \frac{j}{2} \right\rceil \text{ mod } n.$$
+
+\null 
+
+\noindent
+Draw a line between every other column and every other row of $B$ to group its elements into $2 \times 2$ boxes. The box of $B$'s elements in the $x^{th}$ row and $y^{th}$ column of $B$'s boxes, with $0 \leq x < m$ and $0 \leq y < n$, has the following form.
+
+\null 
+
+$$\begin{bmatrix}A_{x,y} & A_{x+1 \text{ mod } m,y}\\ A_{x,y+1 \text{ mod } n} & A_{x+1 \text{ mod } m,y+1 \text{ mod } n}\end{bmatrix}$$
+
+\null 
+
+\noindent
+$B$ therefore displays which $2 \times 2$ matrices $[A]$ contains, even those not immediately apparent in $A$. Denote this process $A \xrightarrow[\text{map}] \\ B$.
+
+\null 
+
+\begin{Theorem}
+The Clockwise and Counterclockwise arrays are $4 \times 4$ De Bruijn arrays of $2 \times 2$ 0-1 sub-matrices.
+\end{Theorem}
+\begin{proof}
+
+Find the sub-matrix map for any representative of the Clockwise array.
+
+\begin{figure}[h!]
+$$\begin{bmatrix} 
+0 & 1 & 0 & 0 \\
+0 & 1 & 1 & 1 \\
+1 & 1 & 1 & 0\\
+0 & 0 & 1 & 0\\
+\end{bmatrix}
+\quad \xrightarrow[\text{map}] \quad \quad 
+\begin{tabular}{| c c || c c || c c || c c|}
+\hline
+0 & 1 & 1 & 0 & 0 & 0 & 0 & 0\\
+0 & 1 & 1 & 1 & 1 & 1 & 1 & 0\\
+\hline
+\hline
+0 & 1 & 1 & 1 & 1 & 1 & 1 & 0\\
+1 & 1 & 1 & 1 & 1 & 0 & 0 & 1\\
+\hline
+\hline
+1 & 1 & 1 & 1 & 1 & 0 & 0 & 1\\
+0 & 0 & 0 & 1 & 1 & 0 & 0 & 0\\
+\hline
+\hline
+0 & 0 & 0 & 1 & 1 & 0 & 0 & 0\\
+0 & 1 & 1 & 0 & 0 & 0 & 0 & 0\\
+\hline
+\end{tabular}$$
+\caption{A map of the sub-matrices in $A$}
+\end{figure}
+
+\noindent
+Each of the sixteen boxes of elements holds a different $2 \times 2$ combination of 0s and 1s. Therefore, the Clockwise array contains each of the sixteen possible $2 \times 2$ 0-1 sub-matrices precisely once, satisfying Definition 4. The proof for the Counterclockwise array is identical. \end{proof}
+
+\null 
+
+\noindent
+Even armed with sub-matrix mapping, it may be difficult to visually ensure each of the sixteen possible $2 \times 2$ 0-1 sub-matrices is contained precisely once. Hexadecimal tiling will assist in visual understanding.
+
+\clearpage
+\subsubsection{Hexadecimal Tiling}
+
+\noindent
+In hexadecimal tiling, each $2 \times 2$ 0-1 matrix is assigned a symbol. These symbols use black space to represent 0s and white space to represent 1s.
+
+\begin{figure}[H]
+\centering
+\begin{tabular}{|c|c|c|c|c|c|c|c|}
+\hline
+Matrix & Symbol & Matrix & Symbol & Matrix & Symbol & Matrix & Symbol\\
+\hline
+\hline
+$\begin{matrix}
+0 & 0\\
+0 & 0\\
+\end{matrix}$ & \includegraphics[scale=.25]{AllZero.png} & $\begin{matrix}
+1 & 1\\
+1 & 1\\
+\end{matrix}$ & \includegraphics[scale=.25]{AllOne.png} & $\begin{matrix}
+1 & 0\\
+0 & 1\\
+\end{matrix}$ & \includegraphics[scale=.25]{DownRight.png} & $\begin{matrix}
+0 & 1\\
+1 & 0\\
+\end{matrix}$ & \includegraphics[scale=.25]{UpRight.png}\\
+\hline
+$\begin{matrix}
+1 & 1\\
+0 & 0\\
+\end{matrix}$ & \includegraphics[scale=.25]{up.png} & $\begin{matrix}
+1 & 0\\
+1 & 0\\
+\end{matrix}$ & \includegraphics[scale=.25]{left.png} & $\begin{matrix}
+0 & 0\\
+1 & 1\\
+\end{matrix}$ & \includegraphics[scale=.25]{down.png} & $\begin{matrix}
+0 & 1\\
+0 & 1\\
+\end{matrix}$ & \includegraphics[scale=.25]{right.png}\\
+\hline
+$\begin{matrix}
+1 & 0\\
+0 & 0\\
+\end{matrix}$ & \includegraphics[scale=.25]{Aye.png} & $\begin{matrix}
+0 & 1\\
+0 & 0\\
+\end{matrix}$ & \includegraphics[scale=.25]{Bee.png} & $\begin{matrix}
+0 & 0\\
+1 & 0\\
+\end{matrix}$ & \includegraphics[scale=.25]{Cee.png} & $\begin{matrix}
+0 & 0\\
+0 & 1\\
+\end{matrix}$ & \includegraphics[scale=.25]{Dee.png}\\
+\hline
+$\begin{matrix}
+0 & 1\\
+1 & 1\\
+\end{matrix}$ & \includegraphics[scale=.25]{One.png} & $\begin{matrix}
+1 & 0\\
+1 & 1\\
+\end{matrix}$ & \includegraphics[scale=.25]{Two.png} & $\begin{matrix}
+1 & 1\\
+0 & 1\\
+\end{matrix}$ & \includegraphics[scale=.25]{Three.png} & $\begin{matrix}
+1 & 1\\
+1 & 0\\
+\end{matrix}$ & \includegraphics[scale=.25]{Four.png}\\
+\hline
+\end{tabular}
+\label{hexTiles}
+\caption{The Hexadecimal Tiles}
+\end{figure}
+
+\noindent
+Given an $m \times n$ toroidal array $[A]$ containing only 0s and 1s, generate its hexadecimal tiling $C$ by generating the sub-matrix map $B$ for any $A \in [A]$, then replacing each box in $B$ with the hexadecimal tile corresponding to the $2 \times 2$ matrix it contains. Denote this process $A \xrightarrow[\text{map}] \\ B \xrightarrow[\text{hex}] \\ C$. 
+
+\null 
+
+\noindent
+Hex tiling the Clockwise array shows it contains precisely the $2 \times 2$ 0-1 matrices.
+
+\begin{figure}[H]
+\noindent
+\makebox[\textwidth][c]{$\begin{bmatrix} 
+0 & 1 & 0 & 0 \\
+0 & 1 & 1 & 1 \\
+1 & 1 & 1 & 0\\
+0 & 0 & 1 & 0\\
+\end{bmatrix}
+\quad \xrightarrow[\text{map}] \quad \quad
+\begin{tabular}{| c c || c c || c c || c c|}
+\hline
+0 & 1 & 1 & 0 & 0 & 0 & 0 & 0\\
+0 & 1 & 1 & 1 & 1 & 1 & 1 & 0\\
+\hline
+\hline
+0 & 1 & 1 & 1 & 1 & 1 & 1 & 0\\
+1 & 1 & 1 & 1 & 1 & 0 & 0 & 1\\
+\hline
+\hline
+1 & 1 & 1 & 1 & 1 & 0 & 0 & 1\\
+0 & 0 & 0 & 1 & 1 & 0 & 0 & 0\\
+\hline
+\hline
+0 & 0 & 0 & 1 & 1 & 0 & 0 & 0\\
+0 & 1 & 1 & 0 & 0 & 0 & 0 & 0\\
+\hline
+\end{tabular}
+\quad \xrightarrow[\text{hex}] \quad \quad
+\begin{bmatrix} 
+\includegraphics[scale=.25]{right.png} & \includegraphics[scale=.25]{Two.png} & \includegraphics[scale=.25]{down.png} & \includegraphics[scale=.25]{Cee.png}\\
+\includegraphics[scale=.25]{One.png} & \includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{Four.png} & \includegraphics[scale=.25]{DownRight.png}\\
+\includegraphics[scale=.25]{up.png} & \includegraphics[scale=.25]{Three.png} & \includegraphics[scale=.25]{left.png} & \includegraphics[scale=.25]{Bee.png}\\
+\includegraphics[scale=.25]{Dee.png} & \includegraphics[scale=.25]{UpRight.png} & \includegraphics[scale=.25]{Aye.png} & \includegraphics[scale=.25]{AllZero.png}\\
+\end{bmatrix}$}
+\caption{Tiling the Clockwise Array}
+\end{figure}
+
+\noindent
+Neighboring tiles must match in color along shared edges and corners to corroborate the 0s and 1s their shared edges represent in $[A]$. This intuitive domino-like structure is vital to next section's proof that the Clockwise and Counterclockwise arrays are the only $4 \times 4$ De Bruijn arrays of $2 \times 2$ 0-1 sub-matrices.
+
+\null 
+
+\noindent
+This has been proven before\cite{B2}, and it is not difficult for a computer to prove by exhaustively checking each of the $2^{16}$ possible $4\times4$ binary matrices for the De Bruijn property. Still, the laborious proof of Theorem 2 will demonstrate the complexity which limits the construction of De Bruijn arrays. 
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+
+
+\clearpage
+\section{Uniqueness of the Clockwise Array}
+
+\begin{Theorem}
+The Clockwise array and its transposition the Counterclockwise array are the only $4 \times 4$ De Bruijn arrays of $2 \times 2$ 0-1 sub-matrices.
+\end{Theorem}
+
+\noindent
+\begin{proof}For contradiction, suppose a $4 \times 4$ De Bruijn array of $2 \times 2$ 0-1 sub-matrices exists which is $not$ the Clockwise or Counterclockwise array. This new toroidal array contains $\begin{bmatrix} 1 & 1\\ 1 & 1\\ \end{bmatrix}$ by Definition 4, so represent the array with $\begin{bmatrix} 1 & 1\\ 1 & 1\\ \end{bmatrix}$ in its center without any loss of generality. Convert to hexadecimal tiling, using `$-$' for unknown entries.
+
+\begin{figure}[H]
+$$\begin{bmatrix} 
+- & - & - & - \\
+- & 1 & 1 & - \\
+- & 1 & 1 & - \\
+- & - & - & - \\
+\end{bmatrix}
+\quad \xrightarrow[\text{map}] \quad\xrightarrow[\text{hex}] \quad \quad
+\begin{bmatrix} 
+- & - & - & - \\
+- & \includegraphics[scale=.25]{AllOne.png} & - & - \\
+- & - & - & - \\
+- & - & - & - \\
+\end{bmatrix}$$
+\caption{A new De Bruijn array for contradiction}
+\label{theorem2Start}
+\end{figure}
+
+\noindent
+The hexadecimal tile \includegraphics[scale=.15]{AllZero.png} cannot be directly beside \includegraphics[scale=.15]{AllOne.png} in figure \ref{theorem2Start}, nor diagonally adjacent to it, because it does not have a white edge or corner. This leaves seven spaces available for \includegraphics[scale=.15]{AllZero.png}, marked with $x$ in figure \ref{xs} below.
+
+\begin{figure}[H]
+$$\begin{bmatrix} 
+- & - & - & x \\
+- & \includegraphics[scale=.25]{AllOne.png} & - & x \\
+- & - & - & x \\
+x & x & x & x \\
+\end{bmatrix}$$
+\caption{Possible positions for the $2 \times 2$ zero sub-matrix}
+\label{xs}
+\end{figure}
+
+\begin{Remark}
+Considering symmetry, there are only three unique cases for \includegraphics[scale=.15]{AllZero.png}'s placement: Cases $A$, $B$, and $C$.
+
+\begin{figure}[H]
+$$\begin{bmatrix} 
+- & - & - & - \\
+- & \includegraphics[scale=.25]{AllOne.png} & - & \includegraphics[scale=.25]{AllZero.png} \\
+- & - & - & - \\
+- & - & - & - \\
+\end{bmatrix},
+\quad
+\begin{bmatrix} 
+- & - & - & - \\
+- & \includegraphics[scale=.25]{AllOne.png} & - & - \\
+- & - & - & \includegraphics[scale=.25]{AllZero.png} \\
+- & - & - & - \\
+\end{bmatrix},
+\quad
+\begin{bmatrix} 
+- & - & - & - \\
+- & \includegraphics[scale=.25]{AllOne.png} & - & - \\
+- & - & - & - \\
+- & - & - & \includegraphics[scale=.25]{AllZero.png} \\
+\end{bmatrix}$$
+\caption{Case A, Case B, and Case C, respectively}
+\end{figure}
+
+\noindent
+Given a proof that Case $A$ or Case $B$ cannot lead to a new De Bruijn array, we may reflect the steps of the proof over horizontal or diagonal axes as depicted in figure \ref{reflections} on the next page. Therefore all possibilities for \includegraphics[scale=.15]{AllZero.png}'s placement are accounted for in only three cases.
+\end{Remark}
+
+\begin{figure}
+\centering
+\includegraphics{Symmetries.png}
+\caption{All seven $x$ marks in figure \ref{xs} are accounted for in only three cases}
+\label{reflections}
+\end{figure}
+\vspace{-1mm}
+
+\noindent
+Let us begin straightaway with Case $A$. Placing \includegraphics[scale=.15]{AllZero.png} in this position necessitates placing \includegraphics[scale=.15]{right.png} and \includegraphics[scale=.15]{left.png}, the only tiles with white on one side and black on the other.
+
+\vspace{-1mm}
+\noindent
+\begin{figure}[H]
+\makebox[\textwidth][c]{$\begin{bmatrix} 
+- & - & - & - \\
+0 & 1 & 1 & 0 \\
+0 & 1 & 1 & 0 \\
+- & - & - & - \\
+\end{bmatrix}
+\quad \xrightarrow[\text{map}] \quad \quad
+\begin{tabular}{| c c || c c || c c || c c|}
+\hline
+- & - & - & - & - & - & - & -\\
+0 & 1 & 1 & 1 & 1 & 0 & 0 & 0\\
+\hline
+\hline
+0 & 1 & 1 & 1 & 1 & 0 & 0 & 0\\
+0 & 1 & 1 & 1 & 1 & 0 & 0 & 0\\
+\hline
+\hline
+0 & 1 & 1 & 1 & 1 & 0 & 0 & 0\\
+- & - & - & - & - & - & - & -\\
+\hline
+\hline
+- & - & - & - & - & - & - & -\\
+- & - & - & - & - & - & - & -\\
+\hline
+\end{tabular}\quad \xrightarrow[\text{hex}] \quad \quad \begin{bmatrix} 
+- & - & - & - \\
+\includegraphics[scale=.25]{right.png} & \includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{left.png} & \includegraphics[scale=.25]{AllZero.png} \\
+- & - & - & - \\
+- & - & - & - \\
+\end{bmatrix}$}
+\caption{Case A}
+\label{caseA}
+\end{figure}
+\vspace{-1mm}
+
+\noindent
+Only \includegraphics[scale=.15]{down.png}, \includegraphics[scale=.15]{One.png}, or \includegraphics[scale=.15]{Two.png} could be directly above \includegraphics[scale=.15]{AllOne.png}. Only \includegraphics[scale=.15]{up.png}, \includegraphics[scale=.15]{Three.png}, or \includegraphics[scale=.15]{Four.png} could be directly below \includegraphics[scale=.15]{AllOne.png}. With three possibilities above and below, there should be nine more sub-cases to test. Luckily \includegraphics[scale=.15]{One.png}, \includegraphics[scale=.15]{Two.png}, \includegraphics[scale=.15]{Three.png}, \includegraphics[scale=.15]{Four.png}, \includegraphics[scale=.15]{down.png}, and \includegraphics[scale=.15]{up.png} are reflections of one another, so we may reduce this to four sub-cases:  
+\includegraphics[scale=.15]{down.png} and \includegraphics[scale=.15]{up.png}; \includegraphics[scale=.15]{Two.png} and \includegraphics[scale=.15]{Four.png}; \includegraphics[scale=.15]{Two.png} and \includegraphics[scale=.15]{Three.png}; or \includegraphics[scale=.15]{down.png} and \includegraphics[scale=.15]{Four.png}.
+
+\null 
+\vspace{-1mm}
+
+\noindent
+We may not use $\includegraphics[scale=.15]{down.png}$ above and $\includegraphics[scale=.15]{up.png}$ below $\includegraphics[scale=.15]{AllOne.png}$, because their combination would produce another $\includegraphics[scale=.15]{AllZero.png}$ and this De Bruijn array must contain only one of each tile. In figure \ref{caseA1} below, the contradiction is highlighted in red.
+
+\vspace{-1mm}
+
+\noindent
+\begin{figure}[H]
+\begin{table}[H]
+\makebox[\textwidth][c]{$\begin{bmatrix} 
+- & \colorbox{pink}{0} & \colorbox{pink}{0} & - \\
+\colorbox{pink}{0} & 1 & 1 & \colorbox{pink}{0} \\
+\colorbox{pink}{0} & 1 & 1 & \colorbox{pink}{0} \\
+- & \colorbox{pink}{0} & \colorbox{pink}{0} & - \\
+\end{bmatrix}
+\quad \xrightarrow[\text{map}] \quad \quad
+\begin{tabular}{| c c || c c || c c || c c|}
+\hline
+- & 0 & 0 & 0 & 0 & - & - & -\\
+0 & 1 & 1 & 1 & 1 & 0 & 0 & 0\\
+\hline
+\hline
+0 & 1 & 1 & 1 & 1 & 0 & \colorbox{pink}{0} & \colorbox{pink}{0}\\
+0 & 1 & 1 & 1 & 1 & 0 & \colorbox{pink}{0} & \colorbox{pink}{0}\\
+\hline
+\hline
+0 & 1 & 1 & 1 & 1 & 0 & 0 & 0\\
+- & 0 & 0 & 0 & 0 & - & - & -\\
+\hline
+\hline
+- & 0 & \colorbox{pink}{0} & \colorbox{pink}{0} & 0 & - & - & -\\
+- & 0 & \colorbox{pink}{0} & \colorbox{pink}{0} & 0 & - & - & -\\
+\hline
+\end{tabular} 
+\quad \xrightarrow[\text{hex}] \quad \quad \begin{bmatrix} 
+- & \includegraphics[scale=.25]{down.png} & - & - \\
+\includegraphics[scale=.25]{right.png} & \includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{left.png} & \colorbox{pink}{\includegraphics[scale=.25]{AllZero.png}} \\
+- & \includegraphics[scale=.25]{up.png} & - & - \\
+- & \colorbox{pink}{\includegraphics[scale=.25]{AllZero.png}} & - & - \\
+\end{bmatrix}$}
+\end{table}
+\caption{Case A, Sub-case 1 of 4}
+\label{caseA1}
+\end{figure}
+
+\noindent
+Similarly, we may not use \includegraphics[scale=.15]{Two.png} above and \includegraphics[scale=.15]{Four.png} below \includegraphics[scale=.15]{AllOne.png}, as this produces an extra \includegraphics[scale=.15]{left.png}. The contradiction is highlighted in figure \ref{caseA2} below. 
+
+\noindent
+\begin{figure}[H]
+\makebox[\textwidth][c]{$\begin{bmatrix} 
+- & \colorbox{pink}{1} & \colorbox{pink}{0} & - \\
+0 & 1 & \colorbox{pink}{1} & \colorbox{pink}{0} \\
+0 & 1 & \colorbox{pink}{1} & \colorbox{pink}{0} \\
+- & \colorbox{pink}{1} & \colorbox{pink}{0} & - \\
+\end{bmatrix}
+\quad \xrightarrow[\text{map}] \quad \quad
+\begin{tabular}{| c c || c c || c c || c c|}
+\hline
+- & 1 & 1 & 0 & 0 & - & - & -\\
+0 & 1 & 1 & 1 & 1 & 0 & 0 & 0\\
+\hline
+\hline
+0 & 1 & 1 & 1 & \colorbox{pink}{1} & \colorbox{pink}{0} & 0 & 0\\
+0 & 1 & 1 & 1 & \colorbox{pink}{1} & \colorbox{pink}{0} & 0 & 0\\
+\hline
+\hline
+0 & 1 & 1 & 1 & 1 & 0 & 0 & 0\\
+- & 1 & 1 & 0 & 0 & - & - & -\\
+\hline
+\hline
+- & 1 & \colorbox{pink}{1} & \colorbox{pink}{0} & 0 & - & - & -\\
+- & 1 & \colorbox{pink}{1} & \colorbox{pink}{0} & 0 & - & - & -\\
+\hline
+\end{tabular} \quad \xrightarrow[\text{hex}] \quad \quad \begin{bmatrix} 
+- & \includegraphics[scale=.25]{Two.png} & - & - \\
+\includegraphics[scale=.25]{right.png} & \includegraphics[scale=.25]{AllOne.png} & \colorbox{pink}{\includegraphics[scale=.25]{left.png}} & \includegraphics[scale=.25]{AllZero.png} \\
+- & \includegraphics[scale=.25]{Four.png} & - & - \\
+- & \colorbox{pink}{\includegraphics[scale=.25]{left.png}} & - & - \\
+\end{bmatrix}$}
+\caption{Case A, Sub-case 2 of 4}
+\label{caseA2}
+\end{figure}
+
+\noindent
+\includegraphics[scale=.15]{Two.png} above and \includegraphics[scale=.15]{Three.png} below \includegraphics[scale=.15]{AllOne.png} produces a more complicated contradiction.
+
+\noindent
+\begin{figure}[H]
+\makebox[\textwidth][c]{$\begin{bmatrix} 
+- & \colorbox{pink}{1} & \colorbox{pink}{0} & - \\
+0 & \colorbox{pink}{1} & \colorbox{pink}{1} & \colorbox{pink}{0} \\
+0 & 1 & \colorbox{pink}{1} & \colorbox{pink}{0} \\
+- & 0 & 1 & \colorbox{cyan}{?} \\
+\end{bmatrix}
+\quad \xrightarrow[\text{map}] \quad \quad
+\begin{tabular}{| c c || c c || c c || c c|}
+\hline
+- & 1 & \colorbox{pink}{1} & \colorbox{pink}{0} & 0 & - & - & -\\
+0 & 1 & \colorbox{pink}{1} & \colorbox{pink}{1} & 1 & 0 & 0 & 0\\
+\hline
+\hline
+0 & 1 & 1 & 1 & \colorbox{pink}{1} & \colorbox{pink}{0} & 0 & 0\\
+0 & 1 & 1 & 1 & \colorbox{pink}{1} & \colorbox{pink}{0} & 0 & 0\\
+\hline
+\hline
+0 & 1 & 1 & 1 & 1 & 0 & 0 & 0\\
+- & 0 & 0 & 1 & 1 & \colorbox{cyan}{?} & \colorbox{cyan}{?} & -\\
+\hline
+\hline
+- & 0 & 0 & 1 & 1 & \colorbox{cyan}{?} & \colorbox{cyan}{?} & -\\
+- & 1 & 1 & 0 & 0 & - & - & -\\
+\hline
+\end{tabular} \quad \xrightarrow[\text{hex}] \quad \quad
+\begin{bmatrix} 
+- & \colorbox{pink}{\includegraphics[scale=.25]{Two.png}} & - & - \\
+\includegraphics[scale=.25]{right.png} & \includegraphics[scale=.25]{AllOne.png} & \colorbox{pink}{\includegraphics[scale=.25]{left.png}} & \includegraphics[scale=.25]{AllZero.png} \\
+- & \includegraphics[scale=.25]{Three.png} & \colorbox{pink}{?} & - \\
+- & \includegraphics[scale=.25]{UpRight.png} & - & - \\
+\end{bmatrix}$}
+\caption{Case A, Sub-case 3 of 4}
+\label{caseA3}
+\end{figure}
+
+\noindent
+If the blue question mark in the leftmost matrix of figure \ref{caseA3} is 0, then the red question mark in the hexadecimal tiling will be a copy of \includegraphics[scale=.15]{left.png}. If the blue question mark is 1, then the red question mark will be a copy of \includegraphics[scale=.15]{Two.png}. Either of these two possibilities would be a contradiction, as both those tiles are already present and highlighted red. 
+
+\clearpage
+
+\noindent
+The final sub-case is \includegraphics[scale=.15]{down.png} above and \includegraphics[scale=.15]{Four.png} below \includegraphics[scale=.15]{AllOne.png}, pictured in figure \ref{caseA41} below. 
+
+\noindent
+\begin{figure}[H]
+\makebox[\textwidth][c]{$\begin{bmatrix} 
+- & \colorbox{pink}{0} & \colorbox{pink}{0} & - \\
+\colorbox{cyan}{0} & \colorbox{cyan}{1} & 1 & 0 \\
+\colorbox{cyan}{0} & \colorbox{cyan}{1} & 1 & 0 \\
+\colorbox{cyan}{?} & \colorbox{pink}{1} & \colorbox{pink}{0} & \colorbox{pink}{?} \\
+\end{bmatrix}
+\quad \xrightarrow[\text{map}] \quad \quad
+\begin{tabular}{| c c || c c || c c || c c|}
+\hline
+- & 0 & 0 & 0 & 0 & - & - & -\\
+0 & 1 & 1 & 1 & 1 & 0 & 0 & 0\\
+\hline
+\hline
+\colorbox{cyan}{0} & \colorbox{cyan}{1} & 1 & 1 & 1 & 0 & 0 & 0\\
+\colorbox{cyan}{0} & \colorbox{cyan}{1} & 1 & 1 & 1 & 0 & 0 & 0\\
+\hline
+\hline
+0 & 1 & 1 & 1 & 1 & 0 & 0 & 0\\
+\colorbox{cyan}{?} & 1 & 1 & 0 & 0 & \colorbox{pink}{?} & \colorbox{pink}{?} & \colorbox{cyan}{?}\\
+\hline
+\hline
+\colorbox{cyan}{?} & 1 & \colorbox{pink}{1} & \colorbox{pink}{0} & 0 & \colorbox{pink}{?} & \colorbox{pink}{?} & \colorbox{cyan}{?}\\
+- & 0 & \colorbox{pink}{0} & \colorbox{pink}{0} & 0 & - & - & -\\
+\hline
+\end{tabular} \quad \xrightarrow[\text{hex}] \quad \quad
+\begin{bmatrix} 
+- & \includegraphics[scale=.25]{down.png} & - & - \\
+\colorbox{cyan}{\includegraphics[scale=.25]{right.png}} & \includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{left.png} & \includegraphics[scale=.25]{AllZero.png} \\
+- & \includegraphics[scale=.25]{Four.png} & - & - \\
+- & \colorbox{pink}{\includegraphics[scale=.25]{Aye.png}} & - & - \\
+\end{bmatrix}$}
+\caption{Case A, Sub-case 4 of 4, Step 1}
+\label{caseA41}
+\end{figure}
+
+\noindent
+Because \includegraphics[scale=.15]{right.png} is already present in figure \ref{caseA41} (highlighted blue), the blue question mark in the leftmost matrix must be 1 instead of 0. Because \includegraphics[scale=.15]{Aye.png} is already present in figure \ref{caseA41} (highlighted red), the red question mark in the leftmost matrix must be 1 instead of 0. These pigeonholed values create a duplicate copy of \includegraphics[scale=.15]{down.png} highlighted red in figure \ref{caseA42} below.
+
+\noindent
+\begin{figure}[H]
+\makebox[\textwidth][c]{$\begin{bmatrix} 
+- & \colorbox{pink}{0} & \colorbox{pink}{0} & - \\
+0 & \colorbox{pink}{1} & \colorbox{pink}{1} & 0 \\
+\colorbox{pink}{0} & 1 & 1 & \colorbox{pink}{0} \\
+\colorbox{pink}{1} & 1 & 0 & \colorbox{pink}{1} \\
+\end{bmatrix} \quad \xrightarrow[\text{map}] \quad \quad
+\begin{tabular}{| c c || c c || c c || c c|}
+\hline
+- & 0 & \colorbox{pink}{0} & \colorbox{pink}{0} & 0 & - & - & -\\
+0 & 1 & \colorbox{pink}{1} & \colorbox{pink}{1} & 1 & 0 & 0 & 0\\
+\hline
+\hline
+0 & 1 & 1 & 1 & 1 & 0 & 0 & 0\\
+0 & 1 & 1 & 1 & 1 & 0 & 0 & 0\\
+\hline
+\hline
+0 & 1 & 1 & 1 & 1 & 0 & \colorbox{pink}{0} & \colorbox{pink}{0}\\
+1 & 1 & 1 & 0 & 0 & 1 & \colorbox{pink}{1} & \colorbox{pink}{1}\\
+\hline
+\hline
+1 & 1 & 1 & 0 & 0 & 1 & 1 & 1\\
+- & 0 & 0 & 0 & 0 & - & - & -\\
+\hline
+\end{tabular}
+\quad \xrightarrow[\text{hex}] \quad \quad
+\begin{bmatrix} 
+- & \colorbox{pink}{\includegraphics[scale=.25]{down.png}} & - & - \\
+\includegraphics[scale=.25]{right.png} & \includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{left.png} & \includegraphics[scale=.25]{AllZero.png} \\
+\includegraphics[scale=.25]{One.png} & \includegraphics[scale=.25]{Four.png} & \includegraphics[scale=.25]{DownRight.png} & \colorbox{pink}{\includegraphics[scale=.25]{down.png}} \\
+- & \includegraphics[scale=.25]{Aye.png} & - & - \\
+\end{bmatrix}$}
+\caption{Case A, Sub-case 4 of 4, Step 2}
+\label{caseA42}
+\end{figure}
+
+\noindent
+Because the pigeonholed values create a second copy of $\includegraphics[scale=.15]{down.png}$, this cannot lead to a De Bruijn array. Therefore, after carefully culling sub-cases by symmetry, Case $A$ has been eliminated and we move to Case $B$ on the following page. 
+
+
+\clearpage
+
+\noindent
+\begin{figure}[H]
+\makebox[\textwidth][c]{$\begin{bmatrix} 
+- & - & - & - \\
+- & 1 & 1 & - \\
+0 & 1 & 1 & 0 \\
+0 & - & - & 0 \\
+\end{bmatrix}
+\quad \xrightarrow[\text{map}] \quad \quad
+\begin{tabular}{| c c || c c || c c || c c|}
+\hline
+- & - & - & - & - & - & - & -\\
+- & 1 & 1 & 1 & 1 & - & - & -\\
+\hline
+\hline
+- & 1 & 1 & 1 & 1 & - & - & -\\
+0 & 1 & 1 & 1 & 1 & 0 & 0 & 0\\
+\hline
+\hline
+0 & 1 & 1 & 1 & 1 & 0 & 0 & 0\\
+0 & - & - & - & - & 0 & 0 & 0\\
+\hline
+\hline
+0 & - & - & - & - & 0 & 0 & 0\\
+- & - & - & - & - & - & - & -\\
+\hline
+\end{tabular} \quad \xrightarrow[\text{hex}] \quad \quad
+\begin{bmatrix} 
+- & - & - & - \\
+- & \includegraphics[scale=.25]{AllOne.png} & - & - \\
+- & - & - & \includegraphics[scale=.25]{AllZero.png} \\
+- & - & - & - \\
+\end{bmatrix}$}
+\caption{Case B}
+\label{caseB}
+\end{figure}
+
+\noindent
+Only three $2 \times 2$ sub-matrices could fit underneath \includegraphics[scale=.15]{AllOne.png}:  \includegraphics[scale=.15]{Three.png} or \includegraphics[scale=.15]{Four.png}, which are reflections of one another, or \includegraphics[scale=.15]{up.png}. The contradiction in the \includegraphics[scale=.15]{up.png} case is immediate.
+
+
+\noindent
+\begin{figure}[H]
+\makebox[\textwidth][c]{$\begin{bmatrix} 
+- & - & - & - \\
+- & 1 & 1 & - \\
+0 & 1 & 1 & 0 \\
+0 & 0 & 0 & 0 \\
+\end{bmatrix}
+\quad \xrightarrow[\text{map}] \quad \quad
+\begin{tabular}{| c c || c c || c c || c c|}
+\hline
+- & - & - & - & - & - & - & -\\
+- & 1 & 1 & 1 & 1 & - & - & -\\
+\hline
+\hline
+- & 1 & 1 & 1 & 1 & - & - & -\\
+0 & 1 & 1 & 1 & 1 & 0 & 0 & 0\\
+\hline
+\hline
+0 & 1 & 1 & 1 & 1 & 0 & 0 & 0\\
+0 & 0 & 0 & 0 & 0 & 0 & 0 & 0\\
+\hline
+\hline
+0 & 0 & 0 & 0 & 0 & 0 & 0 & 0\\
+- & - & - & - & - & - & - & -\\
+\hline
+\end{tabular} \quad \xrightarrow[\text{hex}] \quad \quad
+\begin{bmatrix} 
+- & - & - & - \\
+- & \includegraphics[scale=.25]{AllOne.png} & - & - \\
+\includegraphics[scale=.25]{Bee.png} & \includegraphics[scale=.25]{up.png} & \includegraphics[scale=.25]{Aye.png} & \includegraphics[scale=.25]{AllZero.png} \\
+\colorbox{pink}{?} & \colorbox{pink}{?} & \colorbox{pink}{?} & \colorbox{pink}{?} \\
+\end{bmatrix}$}
+\caption{Case B, Sub-case 1 of 2}
+\label{caseB1}
+\end{figure}
+
+\noindent
+The bottom row of the leftmost matrix in figure \ref{caseB1} is entirely 0. Therefore the red question mark tiles in the hexadecimal tiling must be an ordering of \includegraphics[scale=.15]{AllZero.png}, \includegraphics[scale=.15]{Cee.png}, \includegraphics[scale=.15]{Dee.png}, and \includegraphics[scale=.15]{down.png} or else one of those tiles would be repeated, and the array would fail Definition 4. Because \includegraphics[scale=.15]{AllZero.png} has already been placed in figure \ref{caseB1}, this forced repetition of \includegraphics[scale=.15]{AllZero.png} is a contradiction.
+
+\null 
+
+\noindent
+Now we test the \includegraphics[scale=.15]{Four.png} sub-case (which symmetrically accounts for \includegraphics[scale=.15]{Three.png}, as well).
+
+\noindent
+\begin{figure}[H]
+\makebox[\textwidth][c]{$\begin{bmatrix} 
+- & - & - & - \\
+\colorbox{pink}{?} & 1 & 1 & \colorbox{cyan}{?} \\
+0 & 1 & 1 & 0 \\
+0 & 1 & 0 & 0 \\
+\end{bmatrix}
+\quad \xrightarrow[\text{map}] \quad \quad
+\begin{tabular}{| c c || c c || c c || c c|}
+\hline
+- & - & - & - & - & - & - & -\\
+\colorbox{pink}{?} & 1 & 1 & 1 & 1 & \colorbox{cyan}{?} & \colorbox{cyan}{?} & \colorbox{pink}{?}\\
+\hline
+\hline
+\colorbox{pink}{?} & 1 & 1 & 1 & 1 & \colorbox{cyan}{?} & \colorbox{cyan}{?} & \colorbox{pink}{?}\\
+0 & 1 & 1 & 1 & 1 & 0 & 0 & 0\\
+\hline
+\hline
+\colorbox{pink}{0} & \colorbox{pink}{1} & \colorbox{cyan}{1} & \colorbox{cyan}{1} & 1 & 0 & 0 & 0\\
+\colorbox{pink}{0} & \colorbox{pink}{1} & \colorbox{cyan}{1} & \colorbox{cyan}{0} & 0 & 0 & 0 & 0\\
+\hline
+\hline
+0 & 1 & 1 & 0 & 0 & 0 & 0 & 0\\
+- & - & - & - & - & - & - & -\\
+\hline
+\end{tabular} \quad \xrightarrow[\text{hex}] \quad \quad
+\begin{bmatrix} 
+- & - & - & - \\
+- & \includegraphics[scale=.25]{AllOne.png} & - & - \\
+\colorbox{pink}{\includegraphics[scale=.25]{right.png}} & \colorbox{cyan}{\includegraphics[scale=.25]{Four.png}} & \includegraphics[scale=.25]{Aye.png} & \includegraphics[scale=.25]{AllZero.png} \\
+- & - & - & - \\
+\end{bmatrix}$}
+\caption{Case B, Sub-case 2 of 2, Step 1}
+\label{caseB21}
+\end{figure}
+
+\noindent
+Because \includegraphics[scale=.15]{right.png} is already present in figure \ref{caseB21} (highlighted red), the red question mark in the leftmost matrix must be 1 instead of 0. Because \includegraphics[scale=.15]{Four.png} is already present in figure \ref{caseB21} (highlighted blue), the blue question mark in the leftmost matrix must be 0 instead of 1. 
+
+\noindent
+\begin{figure}[H]
+\makebox[\textwidth][c]{$\begin{bmatrix} 
+- & - & - & - \\
+1 & 1 & 1 & 0 \\
+0 & 1 & 1 & 0 \\
+0 & 1 & 0 & 0 \\
+\end{bmatrix}
+\quad \xrightarrow[\text{map}] \quad \quad
+\begin{tabular}{| c c || c c || c c || c c|}
+\hline
+- & - & - & - & - & - & - & -\\
+1 & 1 & 1 & 1 & 1 & 0 & 0 & 1\\
+\hline
+\hline
+1 & 1 & 1 & 1 & 1 & 0 & 0 & 1\\
+0 & 1 & 1 & 1 & 1 & 0 & 0 & 0\\
+\hline
+\hline
+0 & 1 & 1 & 1 & 1 & 0 & 0 & 0\\
+0 & 1 & 1 & 0 & 0 & 0 & 0 & 0\\
+\hline
+\hline
+0 & 1 & 1 & 0 & 0 & 0 & 0 & 0\\
+- & - & - & - & - & - & - & -\\
+\hline
+\end{tabular} \quad \xrightarrow[\text{hex}] \quad \quad
+\begin{bmatrix} 
+- & - & - & - \\
+\includegraphics[scale=.25]{Three.png} & \includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{left.png} & \includegraphics[scale=.25]{Bee.png} \\
+\includegraphics[scale=.25]{right.png} & \includegraphics[scale=.25]{Four.png} & \includegraphics[scale=.25]{Aye.png} & \includegraphics[scale=.25]{AllZero.png} \\
+- & - & - & - \\
+\end{bmatrix}$}
+\caption{Case B, Sub-case 2 of 2, Step 2}
+\label{caseB22}
+\end{figure}
+
+\noindent
+Each unfinished box in the sub-matrix map of figure \ref{caseB22} has a 1 in the bottom row or a 0 in the top row. Therefore the tile \includegraphics[scale=.15]{up.png}, which is absent in figure \ref{caseB22}, cannot be correctly placed anywhere, so this cannot lead to a De Bruijn array. Thus, Case $B$ has been eliminated and we begin Case $C$.
+
+\noindent
+\begin{figure}[H]
+\makebox[\textwidth][c]{$\begin{bmatrix} 
+0 & - & - & 0 \\
+- & 1 & 1 & - \\
+- & 1 & 1 & - \\
+0 & - & - & 0 \\
+\end{bmatrix}
+\quad \xrightarrow[\text{map}] \quad \quad
+\begin{tabular}{| c c || c c || c c || c c|}
+\hline
+0 & - & - & - & - & 0 & 0 & 0\\
+- & 1 & 1 & 1 & 1 & - & - & -\\
+\hline
+\hline
+- & 1 & 1 & 1 & 1 & - & - & -\\
+- & 1 & 1 & 1 & 1 & - & - & -\\
+\hline
+\hline
+- & 1 & 1 & 1 & 1 & - & - & -\\
+0 & - & - & - & - & 0 & 0 & 0\\
+\hline
+\hline
+0 & - & - & - & - & 0 & 0 & 0\\
+0 & - & - & - & - & 0 & 0 & 0\\
+\hline
+\end{tabular} \quad \xrightarrow[\text{hex}] \quad \quad
+\begin{bmatrix} 
+- & - & - & - \\
+- & \includegraphics[scale=.25]{AllOne.png} & - & - \\
+- & - & - & - \\
+- & - & - & \includegraphics[scale=.25]{AllZero.png} \\
+\end{bmatrix}$}
+\caption{Case C}
+\label{caseC}
+\end{figure}
+
+\noindent
+Just as in case $A$ (see figure \ref{caseA}), there are four possibilities for the sub-matrices above and below \includegraphics[scale=.15]{AllOne.png}, accounting for symmetry:
+\includegraphics[scale=.15]{down.png} and \includegraphics[scale=.15]{up.png}, \includegraphics[scale=.15]{Two.png} and \includegraphics[scale=.15]{Four.png}, \includegraphics[scale=.15]{Two.png} and \includegraphics[scale=.15]{Three.png}, or \includegraphics[scale=.15]{down.png} and \includegraphics[scale=.15]{Four.png}. Using \includegraphics[scale=.15]{down.png} and \includegraphics[scale=.15]{up.png} results in immediate contradiction as we see in figure \ref{caseC1} on the following page.
+
+\noindent
+\begin{figure}[H]
+\makebox[\textwidth][c]{$\begin{bmatrix} 
+\colorbox{pink}{0} & \colorbox{pink}{0} & \colorbox{pink}{0} & \colorbox{pink}{0} \\
+- & 1 & 1 & - \\
+- & 1 & 1 & - \\
+\colorbox{pink}{0} & \colorbox{pink}{0} & \colorbox{pink}{0} & \colorbox{pink}{0} \\
+\end{bmatrix}
+\xrightarrow[\text{map}] \quad
+\begin{tabular}{| c c || c c || c c || c c|}
+\hline
+0 & 0 & 0 & 0 & 0 & 0 & 0 & 0\\
+- & 1 & 1 & 1 & 1 & - & - & -\\
+\hline
+\hline
+- & 1 & 1 & 1 & 1 & - & - & -\\
+- & 1 & 1 & 1 & 1 & - & - & -\\
+\hline
+\hline
+- & 1 & 1 & 1 & 1 & - & - & -\\
+0 & 0 & 0 & 0 & 0 & 0 & 0 & 0\\
+\hline
+\hline
+\colorbox{pink}{0} & \colorbox{pink}{0} & \colorbox{pink}{0} & \colorbox{pink}{0} & \colorbox{pink}{0} & \colorbox{pink}{0} & \colorbox{pink}{0} & \colorbox{pink}{0}\\
+\colorbox{pink}{0} & \colorbox{pink}{0} & \colorbox{pink}{0} & \colorbox{pink}{0} & \colorbox{pink}{0} & \colorbox{pink}{0} & \colorbox{pink}{0} & \colorbox{pink}{0}\\
+\hline
+\end{tabular} \xrightarrow[\text{hex}] \quad
+\begin{bmatrix} 
+- & \includegraphics[scale=.25]{down.png} & - & - \\
+- & \includegraphics[scale=.25]{AllOne.png} & - & - \\
+- & \includegraphics[scale=.25]{up.png} & - & - \\
+\colorbox{pink}{\includegraphics[scale=.25]{AllZero.png}} & \colorbox{pink}{\includegraphics[scale=.25]{AllZero.png}} & \colorbox{pink}{\includegraphics[scale=.25]{AllZero.png}} & \colorbox{pink}{\includegraphics[scale=.25]{AllZero.png}} \\
+\end{bmatrix}$}
+\caption{Case C, Sub-case 1 of 4}
+\label{caseC1}
+\end{figure}
+
+\noindent
+Figure \ref{caseC1} contains multiple copies of \includegraphics[scale=.15]{AllZero.png}. A similar fault occurs with \includegraphics[scale=.15]{Two.png} and \includegraphics[scale=.15]{Four.png}.
+
+\null
+
+\noindent
+\begin{figure}[H]
+\makebox[\textwidth][c]{$\begin{bmatrix} 
+\colorbox{pink}{0} & 1 & \colorbox{pink}{0} & \colorbox{pink}{0} \\
+- & 1 & 1 & - \\
+- & 1 & 1 & - \\
+\colorbox{pink}{0} & 1 & \colorbox{pink}{0} & \colorbox{pink}{0} \\
+\end{bmatrix}
+\quad \xrightarrow[\text{map}] \quad \quad
+\begin{tabular}{| c c || c c || c c || c c|}
+\hline
+0 & 1 & 1 & 0 & 0 & 0 & 0 & 0\\
+- & 1 & 1 & 1 & 1 & - & - & -\\
+\hline
+\hline
+- & 1 & 1 & 1 & 1 & - & - & -\\
+- & 1 & 1 & 1 & 1 & - & - & -\\
+\hline
+\hline
+- & 1 & 1 & 1 & 1 & - & - & -\\
+0 & 1 & 1 & 0 & 0 & 0 & 0 & 0\\
+\hline
+\hline
+0 & 1 & 1 & 0 & \colorbox{pink}{0} & \colorbox{pink}{0} & \colorbox{pink}{0} & \colorbox{pink}{0}\\
+0 & 1 & 1 & 0 & \colorbox{pink}{0} & \colorbox{pink}{0} & \colorbox{pink}{0} & \colorbox{pink}{0}\\
+\hline
+\end{tabular} \quad \xrightarrow[\text{hex}] \quad \quad
+\begin{bmatrix} 
+- & \includegraphics[scale=.25]{Two.png} & - & - \\
+- & \includegraphics[scale=.25]{AllOne.png} & - & - \\
+- & \includegraphics[scale=.25]{Four.png} & - & - \\
+\includegraphics[scale=.25]{right.png} & \includegraphics[scale=.25]{left.png} & \colorbox{pink}{\includegraphics[scale=.25]{AllZero.png}} & \colorbox{pink}{\includegraphics[scale=.25]{AllZero.png}} \\
+\end{bmatrix}$}
+\caption{Case C, Sub-case 2 of 4}
+\label{caseC2}
+\end{figure}
+
+\noindent
+A similar contradiction occurs again with \includegraphics[scale=.15]{down.png} and \includegraphics[scale=.15]{Four.png}.
+
+\noindent
+\begin{figure}[H]
+\makebox[\textwidth][c]{$\begin{bmatrix} 
+\colorbox{pink}{0} & 0 & \colorbox{pink}{0} & \colorbox{pink}{0} \\
+- & 1 & 1 & - \\
+- & 1 & 1 & - \\
+\colorbox{pink}{0} & 1 & \colorbox{pink}{0} & \colorbox{pink}{0} \\
+\end{bmatrix}
+\quad \xrightarrow[\text{map}] \quad \quad
+\begin{tabular}{| c c || c c || c c || c c|}
+\hline
+0 & 0 & 0 & 0 & 0 & 0 & 0 & 0\\
+- & 1 & 1 & 1 & 1 & - & - & -\\
+\hline
+\hline
+- & 1 & 1 & 1 & 1 & - & - & -\\
+- & 1 & 1 & 1 & 1 & - & - & -\\
+\hline
+\hline
+- & 1 & 1 & 1 & 1 & - & - & -\\
+0 & 1 & 1 & 0 & 0 & 0 & 0 & 0\\
+\hline
+\hline
+0 & 1 & 1 & 0 & \colorbox{pink}{0} & \colorbox{pink}{0} & \colorbox{pink}{0} & \colorbox{pink}{0}\\
+0 & 0 & 0 & 0 & \colorbox{pink}{0} & \colorbox{pink}{0} & \colorbox{pink}{0} & \colorbox{pink}{0}\\
+\hline
+\end{tabular} \quad \xrightarrow[\text{hex}] \quad \quad
+\begin{bmatrix} 
+- & \includegraphics[scale=.25]{down.png} & - & - \\
+- & \includegraphics[scale=.25]{AllOne.png} & - & - \\
+- & \includegraphics[scale=.25]{Four.png} & - & - \\
+\includegraphics[scale=.25]{Bee.png} & \includegraphics[scale=.25]{Aye.png} & \colorbox{pink}{\includegraphics[scale=.25]{AllZero.png}} & \colorbox{pink}{\includegraphics[scale=.25]{AllZero.png}} \\
+\end{bmatrix}$}
+\caption{Case C, Sub-case 3 of 4}
+\end{figure}
+
+\noindent
+The only remaining case, \includegraphics[scale=.15]{Two.png} and \includegraphics[scale=.15]{Three.png}, will require a Lemma. We begin on the following page. 
+
+\clearpage
+
+\noindent
+\begin{figure}[H]
+\makebox[\textwidth][c]{$\begin{bmatrix} 
+0 & 1 & 0 & 0 \\
+\colorbox{pink}{-} & 1 & 1 & \colorbox{pink}{-} \\
+\colorbox{pink}{-} & 1 & 1 & \colorbox{pink}{-} \\
+0 & 0 & 1 & 0 \\
+\end{bmatrix}
+\quad \xrightarrow[\text{map}] \quad \quad
+\begin{tabular}{| c c || c c || c c || c c|}
+\hline
+0 & 1 & 1 & 0 & 0 & 0 & 0 & 0\\
+- & 1 & 1 & 1 & 1 & - & - & -\\
+\hline
+\hline
+- & 1 & 1 & 1 & 1 & - & \colorbox{pink}{-} & \colorbox{pink}{-}\\
+- & 1 & 1 & 1 & 1 & - & \colorbox{pink}{-} & \colorbox{pink}{-}\\
+\hline
+\hline
+- & 1 & 1 & 1 & 1 & - & - & -\\
+0 & 0 & 0 & 1 & 1 & 0 & 0 & 0\\
+\hline
+\hline
+0 & 0 & 0 & 1 & 1 & 0 & 0 & 0\\
+0 & 1 & 1 & 0 & 0 & 0 & 0 & 0\\
+\hline
+\end{tabular} \quad \xrightarrow[\text{hex}] \quad \quad
+\begin{bmatrix} 
+- & \includegraphics[scale=.25]{Two.png} & - & - \\
+- & \includegraphics[scale=.25]{AllOne.png} & - & \colorbox{pink}{?} \\
+- & \includegraphics[scale=.25]{Three.png} & - & - \\
+\includegraphics[scale=.25]{Dee.png} & \includegraphics[scale=.25]{UpRight.png} & \includegraphics[scale=.25]{Aye.png} & \includegraphics[scale=.25]{AllZero.png} \\
+\end{bmatrix}$}
+\caption{Case C, Sub-case 4 of 4, Step 1}
+\label{caseC41}
+\end{figure}
+
+\noindent
+The red question mark in the hexadecimal tiling of figure \ref{caseC41} may not repeat \includegraphics[scale=.15]{AllOne.png}, \includegraphics[scale=.15]{AllZero.png},
+\includegraphics[scale=.15]{UpRight.png},
+\includegraphics[scale=.15]{Two.png}, 
+\includegraphics[scale=.15]{Three.png},
+\includegraphics[scale=.15]{Aye.png}, or
+\includegraphics[scale=.15]{Dee.png}. It may not be \includegraphics[scale=.15]{DownRight.png}, because that forms the Clockwise array as seen below in figure \ref{caseC42} below, contradicting our initial assumption.
+
+\begin{figure}[H]
+\begin{table}[H]
+\noindent
+\makebox[\textwidth][c]{$\begin{bmatrix} 
+0 & 1 & 0 & 0 \\
+0 & 1 & 1 & 1 \\
+1 & 1 & 1 & 0\\
+0 & 0 & 1 & 0\\
+\end{bmatrix}
+\quad \xrightarrow[\text{map}] \quad \quad
+\begin{tabular}{| c c || c c || c c || c c|}
+\hline
+0 & 1 & 1 & 0 & 0 & 0 & 0 & 0\\
+0 & 1 & 1 & 1 & 1 & 1 & 1 & 0\\
+\hline
+\hline
+0 & 1 & 1 & 1 & 1 & 1 & 1 & 0\\
+1 & 1 & 1 & 1 & 1 & 0 & 0 & 1\\
+\hline
+\hline
+1 & 1 & 1 & 1 & 1 & 0 & 0 & 1\\
+0 & 0 & 0 & 1 & 1 & 0 & 0 & 0\\
+\hline
+\hline
+0 & 0 & 0 & 1 & 1 & 0 & 0 & 0\\
+0 & 1 & 1 & 0 & 0 & 0 & 0 & 0\\
+\hline
+\end{tabular}
+\quad \xrightarrow[\text{hex}] \quad \quad
+\begin{bmatrix} 
+\includegraphics[scale=.25]{right.png} & \includegraphics[scale=.25]{Two.png} & \includegraphics[scale=.25]{down.png} & \includegraphics[scale=.25]{Cee.png}\\
+\includegraphics[scale=.25]{One.png} & \includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{Four.png} & \includegraphics[scale=.25]{DownRight.png}\\
+\includegraphics[scale=.25]{up.png} & \includegraphics[scale=.25]{Three.png} & \includegraphics[scale=.25]{left.png} & \includegraphics[scale=.25]{Bee.png}\\
+\includegraphics[scale=.25]{Dee.png} & \includegraphics[scale=.25]{UpRight.png} & \includegraphics[scale=.25]{Aye.png} & \includegraphics[scale=.25]{AllZero.png}\\
+\end{bmatrix}$}
+\end{table}
+\caption{Case C, Sub-case 4, Step 2}
+\label{caseC42}
+\end{figure}
+
+\noindent
+A Lemma further removes \includegraphics[scale=.15]{One.png}, \includegraphics[scale=.15]{Four.png}, \includegraphics[scale=.15]{Bee.png}, and
+\includegraphics[scale=.15]{Cee.png} from consideration.
+
+\null 
+
+\noindent
+\begin{Lemma} $4 \times 4$ De Bruijn arrays of $2 \times 2$ 0-1 sub-matrices contain eight 0s. \end{Lemma} 
+
+\begin{proof}
+Such a De Bruijn array $[A]$ contains each hexadecimal tile precisely once. \includegraphics[scale=.15]{AllOne.png} represents no 0s in $[A]$'s sub-matrix map. \includegraphics[scale=.15]{One.png}, \includegraphics[scale=.15]{Two.png}, \includegraphics[scale=.15]{Three.png}, and \includegraphics[scale=.15]{Four.png} represent one 0 each. \includegraphics[scale=.15]{up.png}, \includegraphics[scale=.15]{left.png}, 
+\includegraphics[scale=.15]{down.png},
+\includegraphics[scale=.15]{right.png}, 
+\includegraphics[scale=.15]{UpRight.png}, and
+\includegraphics[scale=.15]{DownRight.png} represent two 0s each. \includegraphics[scale=.15]{Aye.png}, \includegraphics[scale=.15]{Bee.png}, \includegraphics[scale=.15]{Cee.png}, and \includegraphics[scale=.15]{Dee.png} represent three 0s each. \includegraphics[scale=.15]{AllZero.png} represents four 0s in $[A]$'s sub-matrix map. 
+
+\null 
+
+\noindent
+$(1 \times 0) + (4 \times 1) + (6 \times 2) + (4 \times 3) + (1 \times 4) = 32$ zeroes. $[A]$'s sub-matrix map features four times as many 0s as $[A]$ by construction, so $[A]$ contains $\frac{32}{4} = $ eight 0s. The remaining eight spaces are 1s. \end{proof}
+
+\null 
+
+\noindent
+The leftmost matrix in figure \ref{caseC41} includes six 0s and 1s. Lemma 1 implies the red question mark in its hexadecimal tiling must therefore represent two 0s and two 1s; it must be one of \includegraphics[scale=.15]{up.png}, \includegraphics[scale=.15]{left.png}, 
+\includegraphics[scale=.15]{down.png}, or
+\includegraphics[scale=.15]{right.png}.
+
+\clearpage
+\noindent
+Replacing the red question mark with \includegraphics[scale=.15]{up.png} creates several contradictions, one of which is highlighted in figure \ref{caseC43}. (Using \includegraphics[scale=.15]{down.png} produces the same array, rotated.)
+
+\noindent
+\begin{figure}[H]
+\makebox[\textwidth][c]{$\begin{bmatrix} 
+\colorbox{pink}{0} & 1 & 0 & \colorbox{pink}{0} \\
+1 & 1 & 1 & 1 \\
+\colorbox{pink}{0} & 1 & 1 & \colorbox{pink}{0} \\
+\colorbox{pink}{0} & 0 & 1 & \colorbox{pink}{0} \\
+\end{bmatrix}
+\quad \xrightarrow[\text{map}] \quad \xrightarrow[\text{hex}] \quad \quad
+\begin{bmatrix} 
+\includegraphics[scale=.25]{One.png} & \includegraphics[scale=.25]{Two.png} & \includegraphics[scale=.25]{down.png} & \includegraphics[scale=.25]{down.png} \\
+\includegraphics[scale=.25]{Three.png} & \includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{Four.png} & \includegraphics[scale=.25]{up.png} \\
+\includegraphics[scale=.25]{Bee.png} & \includegraphics[scale=.25]{Three.png} & \includegraphics[scale=.25]{left.png} & \colorbox{pink}{\includegraphics[scale=.25]{AllZero.png}} \\
+\includegraphics[scale=.25]{Dee.png} & \includegraphics[scale=.25]{UpRight.png} & \includegraphics[scale=.25]{Aye.png} & \colorbox{pink}{\includegraphics[scale=.25]{AllZero.png}} \\
+\end{bmatrix}$}
+\caption{Case C, Sub-case 4, Step 3}
+\label{caseC43}
+\end{figure}
+
+\noindent
+Replacing the red question mark with \includegraphics[scale=.15]{left.png} creates another contradiction. (Using \includegraphics[scale=.15]{right.png} produces the same array, rotated.)
+
+\noindent
+\begin{figure}[H]
+\makebox[\textwidth][c]{$\begin{bmatrix} 
+0 & 1 & 0 & 0 \\
+0 & 1 & 1 & 1 \\
+0 & 1 & 1 & 1 \\
+0 & 0 & 1 & 0 \\
+\end{bmatrix}
+\quad \xrightarrow[\text{map}] \quad \xrightarrow[\text{hex}] \quad \quad
+\begin{bmatrix} 
+\includegraphics[scale=.25]{right.png} & \includegraphics[scale=.25]{Two.png} & \includegraphics[scale=.25]{down.png} & \includegraphics[scale=.25]{Cee.png} \\
+\includegraphics[scale=.25]{right.png} & \colorbox{pink}{\includegraphics[scale=.25]{AllOne.png}} & \colorbox{pink}{\includegraphics[scale=.25]{AllOne.png}} & \includegraphics[scale=.25]{left.png} \\
+\includegraphics[scale=.25]{Bee.png} & \includegraphics[scale=.25]{Three.png} & \includegraphics[scale=.25]{Four.png} & \includegraphics[scale=.25]{Aye.png} \\
+\includegraphics[scale=.25]{Dee.png} & \includegraphics[scale=.25]{UpRight.png} & \includegraphics[scale=.25]{Aye.png} & \includegraphics[scale=.25]{AllZero.png} \\
+\end{bmatrix}$}
+\caption{Case C, Sub-case 4, Step 4}
+\label{caseC44}
+\end{figure}
+
+\noindent
+Thus, Case $C$ only yields a De Bruijn array if it's the Clockwise or Counterclockwise array, and the proof by contradiction is complete. Theorem 2 is proven. \end{proof}
+
+
+\null 
+
+\noindent
+In the first half of this capstone project, we have proven $4 \times 4$ De Bruijn arrays of $2 \times 2$ 0-1 sub-matrices exist, and the uniqueness of the Clockwise and Counterclockwise arrays. This and more is already known\cite{Sequences}. 
+
+\null 
+
+\noindent
+In the second half, we will define and construct a $16 \times 4 \times 4$ De Bruijn array of $2 \times 2 \times 2$ 0-1 sub-arrays. We will provide a lower bound for the quantity of these objects, and inductively extend the construction to produce analogues to the De Bruijn sequence in higher dimensions. We will also speculate at potential applications for high-dimension De Bruijn arrays. 
+\clearpage
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+\clearpage
+\section{Transitioning to Three Dimensions}
+
+\subsection{Notation for $3D$ Arrays}
+
+\noindent
+In this paper 3D arrays are presented as cross-sectional $2D$ matrices listed from `front' to `back' separated by crosses. For example, the $2 \times 2 \times 2$ array with front layer \includegraphics[scale=.15]{One.png} and back layer \includegraphics[scale=.15]{AllOne.png} will be written as
+
+\begin{table}[H]
+\centering
+$\left( \includegraphics[scale=.25]{One.png} \times \includegraphics[scale=.25]{AllOne.png}\right), \text{ or, equivalently, } \left(\begin{bmatrix} 0 & 1\\
+1 & 1\\ \end{bmatrix}
+\times
+\begin{bmatrix} 1 & 1\\
+1 & 1\\ \end{bmatrix}\right).$
+\end{table}
+
+\noindent
+If built out of black and white blocks (black for 0 and white for 1), $\left( \includegraphics[scale=.15]{One.png} \times \includegraphics[scale=.15]{AllOne.png}\right)$ would appear as in figure \ref{blocks} below.
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=.7]{LayerStacking.png}
+\caption{A 3D array expressed as layers}
+\label{blocks}
+\end{figure}
+
+\noindent
+In discussing the position of $2 \times 2 \times 2$ sub-arrays in $3D$ arrays, it will be helpful to have less burdensome terminology.
+
+\null 
+
+\begin{Definition} A \emph{$b$-cube} is a $2 \times 2 \times 2$ array of binary elements, 0s and 1s. \end{Definition}
+
+\null 
+
+\begin{Definition}The front, top, left element of a $b$-cube is its \emph{Handle}. The position of a $b$-cube in a 3D array is stated as the position of its handle in the format (Layers back, Rows down, Columns right). As stated in Section 1.2, array indexes begin at zero. \end{Definition}
+
+\null 
+
+\noindent
+For example, the handle of the $b$-cube $\left( \includegraphics[scale=.15]{One.png} \times \includegraphics[scale=.15]{AllOne.png}\right)$ is its 0, the black corner. 
+
+\null 
+
+\noindent
+Discussion of De Bruijn arrays in three dimensions requires the notion of a 3D array shaped like a hyper-torus embedded in 4D space. The following definitions are direct extensions of those presented in sections 2.2 and 2.3 on page 6.
+
+\clearpage
+\subsection{The Hyper-Toroidal Array}
+
+\begin{Definition}
+An \emph{$m \times n \times p$ Hyper-toroidal Array} is an equivalence class of $m \times n \times p$ arrays under the relation $A \approx B$ if $A$ and $B$ are both $m \times n \times p$ arrays and there exist non-negative integers $x,y,$ and $z$ with $x < m$, $y < n$, $z < p$ such that for all entries of $A$ and $B$, $A_{i,j,k} = B_{d,e,f}$ with $d = i + x \text{ mod }n$, $d = j + y \text{ mod } m$, and $f = k + z \text{ mod } p$. \end{Definition}
+
+\null 
+
+\begin{Definition}
+An $m \times n \times p$ hyper-toroidal array $[A]$ \emph{contains} a $d \times e \times f$ array $B$ (with $d \leq m$, $e \leq n$, and $f \leq p$) if there exists an array $A \in [A]$ so $\underset{\substack{0 \leq i < d,\\ 0 \leq j < e,\\ 0 \leq k < f}}{A_{i,j,k}} = B_{i,j,k}$. 
+
+\null 
+
+\null 
+
+\noindent
+If $A$ is the only array with this trait in $[A]$, then $[A]$ contains $B$ \emph{precisely once.}
+\end{Definition}
+
+\null 
+
+\noindent
+With these definitions, we may explore De Bruijn arrays in three dimensions.
+
+
+
+
+\subsection{Defining De Bruijn Arrays in Three Dimensions}
+
+\begin{Definition}
+A \emph{$16 \times 4 \times 4$ De Bruijn array of $b$-cubes} is a $16 \times 4 \times 4$ hyper-toroidal array which contains each $b$-cube precisely once.
+\end{Definition}
+
+\null 
+
+\noindent
+The position of a $b$-cube's handle in a De Bruijn array $[A]$ should be given with respect to a stationary reference point so coordinates refer to the same location for any representative $A \in [A]$. The following definition provides such a reference point.
+
+\null 
+
+\begin{Definition}
+The \emph{Origin} of a $16 \times 4 \times 4$ De Bruijn array of $b$-cubes is the Handle of  $(\includegraphics[scale=.15]{AllZero.png} \times \includegraphics[scale=.15]{AllZero.png})$, which Definition 12 guarantees is contained precisely once. The origin defines the $0^{th}$ layer, row, and column of the hyper-toroidal array.
+\end{Definition} 
+
+\null 
+
+\noindent
+Then, when a $b$-cube is said to be in position $(x,y,z)$ of a $16 \times 4 \times 4$ De Bruijn array of $b$-cubes, we understand that the $b$-cube's handle is $x$ layers behind, $y$ rows beneath, and $z$ columns right of the handle of $(\includegraphics[scale=.15]{AllZero.png} \times \includegraphics[scale=.15]{AllZero.png})$. $x,y,$ and $z$ should always be non-negative integers with $x<16$ and $y,z < 4$.
+
+\null 
+
+\noindent
+These are the tools necessary to understand section 5. 
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+\clearpage
+\section{Constructing $3D$ De Bruijn Arrays}
+
+\noindent
+This section outlines a construction method, proves objects created with that method satisfy Definition 9, presents such an object, and enumerates its $b$-cubes to prove the existence of $16 \times 4 \times 4$ De Bruijn arrays of $b$-cubes. 
+
+\subsection{A Layer-By-Layer Construction}
+
+\noindent
+Suppose $[F]$ is a $16 \times 4 \times 4$ hyper-toroidal array whose elements are yet unassigned. Let $F \in [F]$. For $0 \leq i \leq 15$ let the $i^{th}$ layer of $F$ be denoted $F_i$.
+
+\null 
+
+\noindent
+Over the same range let $x_i$ and $y_i$ be integers in the set $\{0,1,2,3\}$ such that if $i \neq j$, then at least one of $x_i \neq x_j$ or $y_i \neq y_j$. Realize the set of $(x_i,y_i)$ pairs is an ordering of $(0,0)$, $(0,1)$, $(0,2)$, $(0,3)$, $(1,0)$, $(1,1)$, $\dots, (3,3)$. Without loss of generality because of $[F]$'s hyper-toroidal shape, reorder and relabel so $(x_0, y_0) = (0,0)$.
+
+\null 
+
+\noindent
+Let $F_0$ be the representative of the Clockwise array (or Counterclockwise array, symmetrically) with \includegraphics[scale=.15]{AllZero.png} in its top, left corner. Let $F_{(1,j,k)} = F_{(0,m,n)}$ with $m = j - x_0$ mod 4 and $n = k - y_0$ mod 4. $(x_0,y_0) = (0,0),$ so $F_1 = F_0.$
+
+\begin{figure}[H]
+\centering
+$\left(\begin{bmatrix} 
+0 & 0 & 0 & 1\\
+0 & 0 & 1 & 0\\
+1 & 0 & 1 & 1\\
+0 & 1 & 1 & 1\\
+\end{bmatrix}
+\quad \times \quad
+\begin{bmatrix} 
+0 & 0 & 0 & 1\\
+0 & 0 & 1 & 0\\
+1 & 0 & 1 & 1\\
+0 & 1 & 1 & 1\\
+\end{bmatrix} \right)$
+\caption{$(F_0 \times F_1)$}
+\label{twoLayers}
+\end{figure}
+
+\begin{figure}[H]
+\makebox[\textwidth][c]{
+\begin{tabular}{|c|c|c|c|c|c|c|c|}
+\hline
+$b$-cube & Handle in $[F]$ & $b$-cube & Handle & $b$-cube & Handle & $b$-cube & Handle\\
+\hline
+\hline
+$\left( \includegraphics[scale=.25]{AllZero.png} \times \includegraphics[scale=.25]{AllZero.png} \right)$ & $(0,0,0)$ & $\left( \includegraphics[scale=.25]{Dee.png} \times \includegraphics[scale=.25]{Dee.png} \right)$ & $(0,0,1)$ & $\left( \includegraphics[scale=.25]{UpRight.png} \times \includegraphics[scale=.25]{UpRight.png} \right)$ & $(0,0,2)$ & $\left( \includegraphics[scale=.25]{Aye.png} \times \includegraphics[scale=.25]{Aye.png} \right)$ & $(0,0,3)$\\
+\hline
+$\left( \includegraphics[scale=.25]{Cee.png} \times \includegraphics[scale=.25]{Cee.png} \right)$ & $(0,1,0)$ & $\left( \includegraphics[scale=.25]{right.png} \times \includegraphics[scale=.25]{right.png} \right)$ & $(0,1,1)$ & $\left( \includegraphics[scale=.25]{Two.png} \times \includegraphics[scale=.25]{Two.png} \right)$ & $(0,1,2)$ & $\left( \includegraphics[scale=.25]{down.png} \times \includegraphics[scale=.25]{down.png} \right)$ & $(0,1,3)$\\
+\hline
+$\left( \includegraphics[scale=.25]{DownRight.png} \times \includegraphics[scale=.25]{DownRight.png} \right)$ & $(0,2,0)$ & $\left( \includegraphics[scale=.25]{One.png} \times \includegraphics[scale=.25]{One.png} \right)$ & $(0,2,1)$ & $\left( \includegraphics[scale=.25]{AllOne.png} \times \includegraphics[scale=.25]{AllOne.png} \right)$ & $(0,2,2)$ & $\left( \includegraphics[scale=.25]{Four.png} \times \includegraphics[scale=.25]{Four.png} \right)$ & $(0,2,3)$\\
+\hline
+$\left( \includegraphics[scale=.25]{Bee.png} \times \includegraphics[scale=.25]{Bee.png} \right)$ & $(0,3,0)$ & $\left( \includegraphics[scale=.25]{up.png} \times \includegraphics[scale=.25]{up.png} \right)$ & $(0,3,1)$ & $\left( \includegraphics[scale=.25]{Three.png} \times \includegraphics[scale=.25]{Three.png} \right)$ & $(0,3,2)$ & $\left( \includegraphics[scale=.25]{left.png} \times \includegraphics[scale=.25]{left.png} \right)$ & $(0,3,3)$\\
+\hline
+\end{tabular}}
+\caption{$b$-cubes contained in $(F_0 \times F_1)$ as layers of $F \in [F]$}
+\label{twoLayers2}
+\end{figure}
+
+\noindent
+For subsequent layers of $F$, let $F_{(i+1,j,k)} = F_{(i,m,n)}$ with $m = j - x_{i}$ mod 4 and $n = k - y_{i}$ mod 4. This ensures every layer of $F$ is congruent to the Clockwise array, but each pair of adjacent layers relates to a different pair $(x_i,y_i)$. The construction of $F$ is complete. The next section proves $[F]$ satisfies definition 9. 
+
+\null 
+
+\noindent
+$(x_{15},y_{15})$ is not used to generate a layer of $F$. Rather, Lemma 2 on the following page shows $F_{(0,j,k)} = F_{(15,m,n)}$ with $m = j - x_{15}$ mod 4 and $n = k - y_{15}$ mod 4.
+
+\subsection{Proving $[F]$ is a $16 \times 4 \times 4$ De Bruijn Array of $b$-cubes}
+
+Lemma 2 demonstrates the relationship between layer 0 and layer 15 of $F \in [F]$.
+
+\null 
+
+\noindent
+\begin{Lemma}
+$F_{(0,j,k)} = F_{(15,m,n)}$ with $m = j - x_{15}$ mod 4 and $n = k - y_{15}$ mod 4.
+\end{Lemma}
+
+\begin{proof}
+Since $$\quad \ \ \ F_{(1,j,k)} = F_{(0,m,n)} \text{ with } m = j - x_{0} \text{ mod } 4 \text{ and } n = k - y_{0} \text{ mod } 4, \text{ and} $$
+$$F_{(2,j,k)} = F_{(1,m,n)} \text{ with } m = j - x_{1} \text{ mod } 4 \text{ and } n = k - y_{1} \text{ mod } 4,$$ 
+
+\noindent 
+it follows that $$F_{(2,j,k)} = F_{(0,m,n)} \text{ with } m = j - (x_{0} + x_1) \text{ mod } 4, n = k - (y_{0} + y_1) \text{ mod } 4.$$ 
+
+\noindent
+Extending this relation yields $$(*) \ \ F_{(15,j,k)} = F_{(0,m,n)} \text{ with } m = j - \sum_{i=0}^{14} x_i \text{ mod } 4 \text{ and } n = k - \sum_{i=0}^{14} y_i \text{ mod } 4.$$ 
+
+\noindent
+Recall the set of all $(x_i,y_i)$ pairs is an ordering of $(0,0)$, $(0,1)$, $(0,2)$, $\dots, (3,3)$, so the sum $\sum_{i=0}^{15} x_i$ equals $4(0) + 4(1) + 4(2) + 4(3) = 24$, which is congruent to 0 mod 4. Thus $\sum_{i=0}^{14} x_i = -x_{15}$ mod 4, and similarly for $y_{15}$. So, $(*)$ implies $F_{(0,j,k)} = F_{(15,m,n)}$ with $m = j - x_{15}$ mod 4 and $n = k - y_{15}$ mod 4.
+\end{proof}
+
+\null 
+
+\noindent
+Now that the relationship between any two adjacent layers of $[F]$ is guaranteed to be unique, the following Lemmas assess the uniqueness of the $b$-cubes they contain.
+
+\null 
+
+\begin{Lemma} 
+The sixteen $b$-cubes contained in $(F_i \times F_{i+1 \text{ mod } 16})$ are distinct for all $0 \leq i \leq 15$.
+\end{Lemma}
+
+\begin{proof}
+Certainly sixteen $b$-cubes are contained, because each of the sixteen elements of the layer $F_i$ is the handle of one $b$-cube (including those $b$-cubes `split' by an edge or corner as $F$ is a representation of hyper-toroidal array $[F]$).
+
+\null 
+
+\noindent
+For contradiction assume that for some $0 \leq i \leq 15$, $(F_i \times F_{i+1 \text{ mod } 16})$ contains two copies of the $b$-cube $(\alpha \times \beta)$, $\alpha$ and $\beta$ being hexadecimal tiles. Then $F_i$ contains two copies of $\alpha$, the front half of $(\alpha \times \beta)$---but $F_i$ is congruent to the Clockwise array, a $4 \times 4$ De Bruijn array of $2 \times 2$ 0-1 sub-matrices. Containing two copies of $\alpha$ would be a contradiction. The same goes for $F_{i+1 \text{ mod } 16}$ and $\beta$. Hence, $(F_i \times F_{i+1 \text{ mod } 16})$ cannot contain two copies of the same $b$-cube. 
+\end{proof}
+
+\clearpage
+
+\begin{Lemma} 
+For integers $i$ and $j$ with $0 \leq i \neq j \leq 15$, $(F_i \times F_{i+1 \text{ mod } 16})$ and $(F_j \times F_{j+1 \text{ mod } 16})$ share none of the $b$-cubes they contain. 
+\end{Lemma}
+
+\begin{proof}
+Suppose $(F_i \times F_{i+1 \text{ mod } 16})$ contains the $b$-cube $(\alpha \times \beta)$. Since $F_j$ and $F_{j+1 \text{ mod } 16}$ are congruent to the Clockwise array, $F_j$ contains $\alpha$ precisely once and $F_{j+1 \text{ mod } 16}$ contains $\beta$ precisely once. 
+
+\null 
+
+\noindent 
+However, since $i \neq j$, Lemma 2 and the construction of $F$ imply
+
+\null 
+
+\makebox[\textwidth][c]{$F_{(i+1  \text{ mod } 16,h,k)} = F_{(i,m,n)} \text{ with } m = h - x_i \text{ mod } 4 \text{ and } n = k - y_i \text{ mod } 4,$}
+
+\null 
+
+\noindent 
+while 
+
+\null 
+
+\makebox[\textwidth][c]{$F_{(j+1 \text{ mod } 16,h,k)} = F_{j,m,n} \text{ with } m = h - x_j \text{ mod } 4 \text{ and } n = k - y_j \text{ mod } 4.$}
+
+\null 
+
+\noindent
+As $i \neq j$ implies as least one of $x_i \neq x_j$ or $y_i \neq y_j$, the alignment of $\alpha$ and $\beta$ in $(F_i \times F_{i+1 \text{ mod } 16})$ \textit{prohibits} their alignment in $(F_j \times F_{j+1 \text{ mod } 16})$. The two distinct pairs of layers can share no $b$-cubes. 
+\end{proof}
+
+\null 
+
+\noindent
+For example, let $(x_1,y_1) = (0,1)$. This one-space offset from $F_1$ to $F_2$ ensures the 16 $b$-cubes in $(F_1 \times F_2)$ are different than the 16 $b$-cubes in $(F_0 \times F_1)$. Compare figures \ref{threeLayers} and \ref{threeLayers2} with figures \ref{twoLayers} and \ref{twoLayers2}.
+
+\begin{figure}[H]
+\centering
+$\left(\begin{bmatrix} 
+0 & 0 & 0 & 1\\
+0 & 0 & 1 & 0\\
+1 & 0 & 1 & 1\\
+0 & 1 & 1 & 1\\
+\end{bmatrix}
+\quad \times \quad 
+\begin{bmatrix} 
+0 & 0 & 0 & 1\\
+0 & 0 & 1 & 0\\
+1 & 0 & 1 & 1\\
+0 & 1 & 1 & 1\\
+\end{bmatrix}
+\quad \times \quad
+\begin{bmatrix} 
+1 & 0 & 0 & 0\\
+0 & 0 & 0 & 1\\
+1 & 1 & 0 & 1\\
+1 & 0 & 1 & 1\\
+\end{bmatrix} \right)$
+\caption{($F_0 \times F_1 \times F_2)$}
+\label{threeLayers}
+\end{figure}
+
+\begin{figure}[H]
+\makebox[\textwidth][c]{
+\begin{tabular}{|c|c|c|c|c|c|c|c|}
+\hline
+$b$-cube & Handle in $F$ & $b$-cube & Handle & $b$-cube & Handle & $b$-cube & Handle\\
+\hline
+\hline
+$\left( \includegraphics[scale=.25]{AllZero.png} \times \includegraphics[scale=.25]{Aye.png} \right)$ & $(1,0,0)$ & $\left( \includegraphics[scale=.25]{Dee.png} \times \includegraphics[scale=.25]{AllZero} \right)$ & $(1,0,1)$ & $\left( \includegraphics[scale=.25]{UpRight.png} \times \includegraphics[scale=.25]{Dee.png} \right)$ & $(1,0,2)$ & $\left( \includegraphics[scale=.25]{Aye.png} \times \includegraphics[scale=.25]{UpRight.png} \right)$ & $(1,0,3)$\\
+\hline
+$\left( \includegraphics[scale=.25]{Cee.png} \times \includegraphics[scale=.25]{down.png} \right)$ & $(1,1,0)$ & $\left( \includegraphics[scale=.25]{right.png} \times \includegraphics[scale=.25]{Cee.png} \right)$ & $(1,1,1)$ & $\left( \includegraphics[scale=.25]{Two.png} \times \includegraphics[scale=.25]{right.png} \right)$ & $(1,1,2)$ & $\left( \includegraphics[scale=.25]{down.png} \times \includegraphics[scale=.25]{Two.png} \right)$ & $(1,1,3)$\\
+\hline
+$\left( \includegraphics[scale=.25]{DownRight.png} \times \includegraphics[scale=.25]{Four.png} \right)$ & $(1,2,0)$ & $\left( \includegraphics[scale=.25]{One.png} \times \includegraphics[scale=.25]{DownRight.png} \right)$ & $(1,2,1)$ & $\left( \includegraphics[scale=.25]{AllOne.png} \times \includegraphics[scale=.25]{One.png} \right)$ & $(1,2,2)$ & $\left( \includegraphics[scale=.25]{Four.png} \times \includegraphics[scale=.25]{AllOne.png} \right)$ & $(1,2,3)$\\
+\hline
+$\left( \includegraphics[scale=.25]{Bee.png} \times \includegraphics[scale=.25]{left.png} \right)$ & $(1,3,0)$ & $\left( \includegraphics[scale=.25]{up.png} \times \includegraphics[scale=.25]{Bee.png} \right)$ & $(1,3,1)$ & $\left( \includegraphics[scale=.25]{Three.png} \times \includegraphics[scale=.25]{up.png} \right)$ & $(1,3,2)$ & $\left( \includegraphics[scale=.25]{left.png} \times \includegraphics[scale=.25]{Three.png} \right)$ & $(1,3,3)$\\
+\hline
+\end{tabular}}
+\caption{b-cubes contained in $(F_1 \times F_2)$ as layers of $F \in [F]$}
+\label{threeLayers2}
+\end{figure}
+
+\clearpage
+
+\begin{Theorem}
+$[F]$ satisfies definition 9.
+\end{Theorem}
+
+\begin{proof}
+$[F]$ is a $16 \times 4 \times 4$ hyper-toroidal array, so it has the required dimensions and shape. 
+
+\null 
+
+\noindent 
+Lemmas 3 and 4 guarantee 16 distinct $b$-cubes in each of 16 pairs of layers, so there are 256 distinct $b$-cubes contained in $[F]$. There are exactly $2^8 = 256$ possible $b$-cubes, so $[F]$ must contain each $b$-cube precisely once. Thus, $[F]$ satisfies Definition 9. 
+\end{proof}
+
+\null 
+
+\noindent
+This construction began with the choice of assigning $F_0$ to be Clockwise or Counterclockwise. Then we permuted the set of sixteen possible pairs of elements from $\{0,1,2,3\}$ with $(0,0)$ first without loss of generality due to $[F]$'s hyper-toroidal shape. Hence, there are at least 
+
+$$2 \times 15! \approx 2.614 \times 10^{12}$$
+
+\noindent
+$16 \times 4 \times 4$ De Bruijn arrays of $b$-cubes. Perhaps more examples could be generated using different construction techniques which did not rely on the Clockwise or Counterclockwise shape (see section 5.3).
+
+\null 
+
+\noindent
+An example of an array built with this construction is written with $\includegraphics[scale=.15]{AllZero.png} = 0$ and $\includegraphics[scale=.15]{AllOne.png} = 1$ on the next page in figure \ref{theWhorl}.
+
+\begin{figure}[H]
+\centering
+$\begin{tabular}{|c | c c c c|| c c c c | c |}
+\hline
+\text{Layer} 0 & \includegraphics[scale=.25]{AllZero.png} & \includegraphics[scale=.25]{AllZero.png} & \includegraphics[scale=.25]{AllZero.png} & \includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{AllZero.png} & \includegraphics[scale=.25]{AllZero.png} & \includegraphics[scale=.25]{AllZero.png} & \includegraphics[scale=.25]{AllOne.png} & \text{Layer} 8\\
+& \includegraphics[scale=.25]{AllZero.png} & \includegraphics[scale=.25]{AllZero.png} & \includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{AllZero.png} & \includegraphics[scale=.25]{AllZero.png} & \includegraphics[scale=.25]{AllZero.png} & \includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{AllZero.png} & \\
+& \includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{AllZero.png} & \includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{AllZero.png} & \includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{AllOne.png} & \text{Offset}\\
+& \includegraphics[scale=.25]{AllZero.png} & \includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{AllZero.png} & \includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{AllOne.png} & (1,3)\\
+\hline
+\hline
+\text{Layer} 1 & \includegraphics[scale=.25]{AllZero.png} & \includegraphics[scale=.25]{AllZero.png} & \includegraphics[scale=.25]{AllZero.png} & \includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{AllZero.png} & \includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{AllOne.png} & \text{Layer} 9\\
+& \includegraphics[scale=.25]{AllZero.png} & \includegraphics[scale=.25]{AllZero.png} & \includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{AllZero.png} & \includegraphics[scale=.25]{AllZero.png} & \includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{AllOne.png} & \\
+\text{Offset} & \includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{AllZero.png} & \includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{AllZero.png} &\includegraphics[scale=.25]{AllZero.png} & \includegraphics[scale=.25]{AllZero.png} & \includegraphics[scale=.25]{AllOne.png} & \text{Offset}\\
+(0,0) & \includegraphics[scale=.25]{AllZero.png} & \includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{AllZero.png} & \includegraphics[scale=.25]{AllZero.png} & \includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{AllZero.png} & (2,0)\\
+\hline
+\hline
+\text{Layer} 2 & \includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{AllZero.png} & \includegraphics[scale=.25]{AllZero.png} & \includegraphics[scale=.25]{AllZero.png} & \includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{AllZero.png} & \includegraphics[scale=.25]{AllZero.png} & \includegraphics[scale=.25]{AllZero.png} & \text{Layer} 10\\
+& \includegraphics[scale=.25]{AllZero.png} & \includegraphics[scale=.25]{AllZero.png} & 
+\includegraphics[scale=.25]{AllZero.png} & 
+\includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{AllZero.png} & \includegraphics[scale=.25]{AllZero.png} & \includegraphics[scale=.25]{AllZero.png} & \includegraphics[scale=.25]{AllOne.png} & \\
+\text{Offset} & \includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{AllZero.png} & \includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{AllZero.png} & \includegraphics[scale=.25]{AllOne.png} & \text{Offset}\\
+(0,1) & \includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{AllZero.png} & \includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{AllZero.png} & \includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{AllOne.png} & (2,1)\\
+\hline
+\hline
+\text{Layer} 3 & \includegraphics[scale=.25]{AllZero.png} & \includegraphics[scale=.25]{AllZero.png} & \includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{AllZero.png} & \includegraphics[scale=.25]{AllZero.png} & \includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{AllOne.png} & \text{Layer} 11\\
+& \includegraphics[scale=.25]{AllZero.png} & \includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{AllZero.png} & 
+\includegraphics[scale=.25]{AllZero.png} & \includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{AllZero.png} & \\
+\text{Offset}& \includegraphics[scale=.25]{AllZero.png} & \includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{AllZero.png} & \includegraphics[scale=.25]{AllZero.png} & \includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{AllZero.png} & \text{Offset}\\
+(0,2) & \includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{AllZero.png} & \includegraphics[scale=.25]{AllZero.png} & \includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{AllZero.png} & \includegraphics[scale=.25]{AllZero.png} & (2,2)\\
+\hline
+\hline
+\text{Layer} 4 & \includegraphics[scale=.25]{AllZero.png} & \includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{AllZero.png} & \includegraphics[scale=.25]{AllZero.png} & \includegraphics[scale=.25]{AllZero.png} & \includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{AllZero.png} & \includegraphics[scale=.25]{AllZero.png} & \text{Layer} 12\\
+& \includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{AllZero.png} & \includegraphics[scale=.25]{AllZero.png} & \includegraphics[scale=.25]{AllZero.png} & \includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{AllZero.png} & \includegraphics[scale=.25]{AllZero.png} & \includegraphics[scale=.25]{AllZero.png} & \\
+\text{Offset} & \includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{AllZero.png} & \includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{AllZero.png} & \text{Offset}\\
+(0,3) & \includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{AllZero.png} & \includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{AllZero.png} & \includegraphics[scale=.25]{AllOne.png} & (2,3)\\
+\hline
+\hline
+\text{Layer} 5 & \includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{AllZero.png} & \includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{AllZero.png} & \includegraphics[scale=.25]{AllZero.png} & \includegraphics[scale=.25]{AllZero.png} & \text{Layer} 13\\
+& \includegraphics[scale=.25]{AllZero.png} & \includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{AllZero.png} & \includegraphics[scale=.25]{AllZero.png} & \includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{AllZero.png} & \\
+\text{Offset} & \includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{AllZero.png} & \includegraphics[scale=.25]{AllZero.png} & \includegraphics[scale=.25]{AllZero.png} & \includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{AllZero.png} & \includegraphics[scale=.25]{AllOne.png} & \text{Offset}\\
+(1,0) & \includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{AllZero.png} & \includegraphics[scale=.25]{AllZero.png} & \includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{AllZero.png} & \includegraphics[scale=.25]{AllZero.png} & (3,0)\\
+\hline
+\hline
+\text{Layer} 6 & \includegraphics[scale=.25]{AllZero.png} & \includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{AllZero.png} & \includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{AllOne.png} & \text{Layer} 14\\
+& \includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{AllZero.png} & \includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{AllZero.png} & \\
+\text{Offset} & \includegraphics[scale=.25]{AllZero.png} & \includegraphics[scale=.25]{AllZero.png} & \includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{AllZero.png} & \includegraphics[scale=.25]{AllZero.png} & \includegraphics[scale=.25]{AllZero.png} & \includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{AllZero.png} & \text{Offset}\\
+(1,1) & \includegraphics[scale=.25]{AllZero.png} & \includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{AllZero.png} & \includegraphics[scale=.25]{AllZero.png} & \includegraphics[scale=.25]{AllZero.png} & \includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{AllZero.png} & \includegraphics[scale=.25]{AllZero.png} & (3,1)\\
+\hline
+\hline
+\text{Layer} 7 & \includegraphics[scale=.25]{AllZero.png} & \includegraphics[scale=.25]{AllZero.png} & \includegraphics[scale=.25]{AllZero.png} & \includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{AllZero.png} & \includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{AllOne.png} & \text{Layer} 15\\
+& \includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{AllZero.png} & \includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{AllZero.png} & \includegraphics[scale=.25]{AllZero.png} & \includegraphics[scale=.25]{AllZero.png} & \\
+\text{Offset} & \includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{AllZero.png} & \includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{AllZero.png} & \includegraphics[scale=.25]{AllZero.png} & \includegraphics[scale=.25]{AllZero.png} & \includegraphics[scale=.25]{AllOne.png} & \text{Offset}\\
+(1,2) & \includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{AllZero.png} & \includegraphics[scale=.25]{AllZero.png} & \includegraphics[scale=.25]{AllZero.png} & \includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{AllZero.png} & \includegraphics[scale=.25]{AllOne.png} & (3,2)\\
+\hline
+\end{tabular}$
+\caption{A $16 \times 4 \times 4$ De Bruijn array of $b$-cubes \\ Note Layer 0 is Layer 15 offset by 3 rows and 3 columns, as stated in Lemma 2}
+\label{theWhorl}
+\end{figure}
+
+
+
+
+%%%%%%%%%%
+
+\begin{figure}[H]
+\makebox[\textwidth][c]{
+\includegraphics[scale=.3]{PhotoTwo.jpg}}
+
+\makebox[\textwidth][c]{
+\includegraphics[scale=.32]{PhotoThree.jpg}}
+\caption{The same array in Lego Brick}
+\label{legos}
+\end{figure}
+
+
+
+
+
+
+\clearpage
+\noindent
+To show every $b$-cube is contained precisely once in the array represented in figures \ref{theWhorl} and \ref{legos}, below find an exhaustive list of all 256 $b$-cubes by their handle.
+
+\begin{table}[H]
+\makebox[\textwidth][c]{
+\begin{tabular}{|c|c|c|c|c|c|c|c|}
+\hline
+$b$-cube & Handle & $b$-cube & Handle & $b$-cube & Handle & $b$-cube & Handle\\
+\hline
+\hline
+$\left( \includegraphics[scale=.25]{AllZero.png} \times \includegraphics[scale=.25]{AllZero.png} \right)$ & $(0,0,0)$ & $\left( \includegraphics[scale=.25]{AllZero.png} \times \includegraphics[scale=.25]{Dee.png} \right)$ & $(3,0,3)$ & $\left( \includegraphics[scale=.25]{AllZero.png} \times \includegraphics[scale=.25]{Cee.png} \right)$ & $(12,0,2)$ & $\left( \includegraphics[scale=.25]{AllZero.png} \times \includegraphics[scale=.25]{down.png} \right)$ & $(13,3,2)$\\
+\hline
+$\left( \includegraphics[scale=.25]{AllZero.png} \times \includegraphics[scale=.25]{Bee.png} \right)$ & $(4,0,2)$ & $\left( \includegraphics[scale=.25]{AllZero.png} \times \includegraphics[scale=.25]{right.png} \right)$ & $(15,1,1)$ & $\left( \includegraphics[scale=.25]{AllZero.png} \times \includegraphics[scale=.25]{UpRight.png} \right)$ & $(2,0,1)$ & $\left( \includegraphics[scale=.25]{AllZero.png} \times \includegraphics[scale=.25]{One.png} \right)$ & $(11,2,3)$\\
+\hline
+$\left( \includegraphics[scale=.25]{AllZero.png} \times \includegraphics[scale=.25]{Aye.png} \right)$ & $(1,0,0)$ & $\left( \includegraphics[scale=.25]{AllZero.png} \times \includegraphics[scale=.25]{DownRight.png} \right)$ & $(8,0,0)$ & $\left( \includegraphics[scale=.25]{AllZero.png} \times \includegraphics[scale=.25]{left.png} \right)$ & $(5,1,2)$ & $\left( \includegraphics[scale=.25]{AllZero.png} \times \includegraphics[scale=.25]{Two.png} \right)$ & $(14,2,3)$\\
+\hline
+$\left( \includegraphics[scale=.25]{AllZero.png} \times \includegraphics[scale=.25]{up.png} \right)$ & $(7,3,1)$ & $\left( \includegraphics[scale=.25]{AllZero.png} \times \includegraphics[scale=.25]{Three.png} \right)$ & $(6,2,3)$ & $\left( \includegraphics[scale=.25]{AllZero.png} \times \includegraphics[scale=.25]{Four.png} \right)$ & $(9,2,0)$ & $\left( \includegraphics[scale=.25]{AllZero.png} \times \includegraphics[scale=.25]{AllOne.png} \right)$ & $(10,0,1)$\\
+\hline
+\end{tabular}}
+\end{table}
+
+\vspace{-5mm}
+
+\begin{table}[H]
+\makebox[\textwidth][c]{
+\begin{tabular}{|c|c|c|c|c|c|c|c|}
+\hline
+$b$-cube & Handle & $b$-cube & Handle & $b$-cube & Handle & $b$-cube & Handle\\
+\hline
+\hline
+$\left( \includegraphics[scale=.25]{Dee.png} \times \includegraphics[scale=.25]{AllZero.png} \right)$ & $(1,0,1)$ & $\left( \includegraphics[scale=.25]{Dee.png} \times \includegraphics[scale=.25]{Dee.png} \right)$ & $(0,0,1)$ & $\left( \includegraphics[scale=.25]{Dee.png} \times \includegraphics[scale=.25]{Cee.png} \right)$ & $(13,3,3)$ & $\left( \includegraphics[scale=.25]{Dee.png} \times \includegraphics[scale=.25]{down.png} \right)$ & $(14,2,0)$\\
+\hline
+$\left( \includegraphics[scale=.25]{Dee.png} \times \includegraphics[scale=.25]{Bee.png} \right)$ & $(5,1,3)$ & $\left( \includegraphics[scale=.25]{Dee.png} \times \includegraphics[scale=.25]{right.png} \right)$ & $(12,0,3)$ & $\left( \includegraphics[scale=.25]{Dee.png} \times \includegraphics[scale=.25]{UpRight.png} \right)$ & $(3,0,0)$ & $\left( \includegraphics[scale=.25]{Dee.png} \times \includegraphics[scale=.25]{One.png} \right)$ & $(8,0,1)$\\
+\hline
+$\left( \includegraphics[scale=.25]{Dee.png} \times \includegraphics[scale=.25]{Aye.png} \right)$ & $(2,0,2)$ & $\left( \includegraphics[scale=.25]{Dee.png} \times \includegraphics[scale=.25]{DownRight.png} \right)$ & $(9,2,1)$ & $\left( \includegraphics[scale=.25]{Dee.png} \times \includegraphics[scale=.25]{left.png} \right)$ & $(6,2,0)$ & $\left( \includegraphics[scale=.25]{Dee.png} \times \includegraphics[scale=.25]{Two.png} \right)$ & $(15,1,2$\\
+\hline
+$\left( \includegraphics[scale=.25]{Dee.png} \times \includegraphics[scale=.25]{up.png} \right)$ & $(4,0,3)$ & $\left( \includegraphics[scale=.25]{Dee.png} \times \includegraphics[scale=.25]{Three.png} \right)$ & $(7,3,2)$ & $\left( \includegraphics[scale=.25]{Dee.png} \times \includegraphics[scale=.25]{Four.png} \right)$ & $(10,0,2)$ & $\left( \includegraphics[scale=.25]{Dee.png} \times \includegraphics[scale=.25]{AllOne.png} \right)$ & $(11,2,0)$\\
+\hline
+\end{tabular}}
+\end{table}
+
+\vspace{-5mm}
+
+\begin{table}[H]
+\makebox[\textwidth][c]{
+\begin{tabular}{|c|c|c|c|c|c|c|c|}
+\hline
+$b$-cube & Handle & $b$-cube & Handle & $b$-cube & Handle & $b$-cube & Handle\\
+\hline
+\hline
+$\left( \includegraphics[scale=.25]{Cee.png} \times \includegraphics[scale=.25]{AllZero.png} \right)$ & $(4,1,2)$ & $\left( \includegraphics[scale=.25]{Cee.png} \times \includegraphics[scale=.25]{Dee.png} \right)$ & $(7,0,1)$ & $\left( \includegraphics[scale=.25]{Cee.png} \times \includegraphics[scale=.25]{Cee.png} \right)$ & $(0,1,0)$ & $\left( \includegraphics[scale=.25]{Cee.png} \times \includegraphics[scale=.25]{down.png} \right)$ & $(1,1,0)$\\
+\hline
+$\left( \includegraphics[scale=.25]{Cee.png} \times \includegraphics[scale=.25]{Bee.png} \right)$ & $(8,1,10$ & $\left( \includegraphics[scale=.25]{Cee.png} \times \includegraphics[scale=.25]{right.png} \right)$ & $(3,1,3)$ & $\left( \includegraphics[scale=.25]{Cee.png} \times \includegraphics[scale=.25]{UpRight.png} \right)$ & $(6,3,3)$ & $\left( \includegraphics[scale=.25]{Cee.png} \times \includegraphics[scale=.25]{One.png} \right)$ & $(15,2,1)$\\
+\hline
+$\left( \includegraphics[scale=.25]{Cee.png} \times \includegraphics[scale=.25]{Aye.png} \right)$ & $(5,2,2)$ & $\left( \includegraphics[scale=.25]{Cee.png} \times \includegraphics[scale=.25]{DownRight.png} \right)$ & $(12,1,2)$ & $\left( \includegraphics[scale=.25]{Cee.png} \times \includegraphics[scale=.25]{left.png} \right)$ & $(9,3,0)$ & $\left( \includegraphics[scale=.25]{Cee.png} \times \includegraphics[scale=.25]{Two.png} \right)$ & $(2,1,1)$\\
+\hline
+$\left( \includegraphics[scale=.25]{Cee.png} \times \includegraphics[scale=.25]{up.png} \right)$ & $(11,3,3)$ & $\left( \includegraphics[scale=.25]{Cee.png} \times \includegraphics[scale=.25]{Three.png} \right)$ & $(10,1,1)$ & $\left( \includegraphics[scale=.25]{Cee.png} \times \includegraphics[scale=.25]{Four.png} \right)$ & $(13,0,2)$ & $\left( \includegraphics[scale=.25]{Cee.png} \times \includegraphics[scale=.25]{AllOne.png} \right)$ & $(14,3,3)$\\
+\hline
+\end{tabular}}
+\end{table}
+
+\vspace{-5mm}
+
+\begin{table}[H]
+\makebox[\textwidth][c]{
+\begin{tabular}{|c|c|c|c|c|c|c|c|}
+\hline
+$b$-cube & Handle & $b$-cube & Handle & $b$-cube & Handle & $b$-cube & Handle\\
+\hline
+\hline
+$\left( \includegraphics[scale=.25]{down.png} \times \includegraphics[scale=.25]{AllZero.png} \right)$ & $( 7 , 0 , 0 )$ & $\left( \includegraphics[scale=.25]{down.png} \times \includegraphics[scale=.25]{Dee.png} \right)$ & $( 6 , 3 , 2 )$ & $\left( \includegraphics[scale=.25]{down.png} \times \includegraphics[scale=.25]{Cee.png} \right)$ & $( 3 , 1 , 2 )$ & $\left( \includegraphics[scale=.25]{down.png} \times \includegraphics[scale=.25]{down.png} \right)$ & $( 0 , 1 , 3 )$\\
+\hline
+$\left( \includegraphics[scale=.25]{down.png} \times \includegraphics[scale=.25]{Bee.png} \right)$ & $( 11 , 3 , 2 )$ & $\left( \includegraphics[scale=.25]{down.png} \times \includegraphics[scale=.25]{right.png} \right)$ & $( 2 , 1 , 0 )$ & $\left( \includegraphics[scale=.25]{down.png} \times \includegraphics[scale=.25]{UpRight.png} \right)$ & $( 5 , 2 , 1 )$ & $\left( \includegraphics[scale=.25]{down.png} \times \includegraphics[scale=.25]{One.png} \right)$ & $( 14 , 3 , 2 )$\\
+\hline
+$\left( \includegraphics[scale=.25]{down.png} \times \includegraphics[scale=.25]{Aye.png} \right)$ & $( 4 , 1 , 1 )$ & $\left( \includegraphics[scale=.25]{down.png} \times \includegraphics[scale=.25]{DownRight.png} \right)$ & $( 15 , 2 , 0 )$ & $\left( \includegraphics[scale=.25]{down.png} \times \includegraphics[scale=.25]{left.png} \right)$ & $( 8 , 1 , 3 )$ & $\left( \includegraphics[scale=.25]{down.png} \times \includegraphics[scale=.25]{Two.png} \right)$ & $( 1 , 1 , 3 )$\\
+\hline
+$\left( \includegraphics[scale=.25]{down.png} \times \includegraphics[scale=.25]{up.png} \right)$ & $( 10 , 1 , 0 )$ & $\left( \includegraphics[scale=.25]{down.png} \times \includegraphics[scale=.25]{Three.png} \right)$ & $( 9 , 3 , 3 )$ & $\left( \includegraphics[scale=.25]{down.png} \times \includegraphics[scale=.25]{Four.png} \right)$ & $( 12 , 1 , 1 )$ & $\left( \includegraphics[scale=.25]{down.png} \times \includegraphics[scale=.25]{AllOne.png} \right)$ & $( 13 , 0 , 1 )$\\
+\hline
+\end{tabular}}
+\end{table}
+
+\vspace{-5mm}
+
+\begin{table}[H]
+\makebox[\textwidth][c]{
+\begin{tabular}{|c|c|c|c|c|c|c|c|}
+\hline
+$b$-cube & Handle & $b$-cube & Handle & $b$-cube & Handle & $b$-cube & Handle\\
+\hline
+\hline
+$\left( \includegraphics[scale=.25]{Bee.png} \times \includegraphics[scale=.25]{AllZero.png} \right)$ & $( 12 , 3 , 2 )$ & $\left( \includegraphics[scale=.25]{Bee.png} \times \includegraphics[scale=.25]{Dee.png} \right)$ & $( 15 , 0 , 1 )$ & $\left( \includegraphics[scale=.25]{Bee.png} \times \includegraphics[scale=.25]{Cee.png} \right)$ & $( 8 , 3 , 0 )$ & $\left( \includegraphics[scale=.25]{Bee.png} \times \includegraphics[scale=.25]{down.png} \right)$ & $( 9 , 1 , 0 )$\\
+\hline
+$\left( \includegraphics[scale=.25]{Bee.png} \times \includegraphics[scale=.25]{Bee.png} \right)$ & $( 0 , 3 , 0 )$ & $\left( \includegraphics[scale=.25]{Bee.png} \times \includegraphics[scale=.25]{right.png} \right)$ & $( 11 , 1 , 3 )$ & $\left( \includegraphics[scale=.25]{Bee.png} \times \includegraphics[scale=.25]{UpRight.png} \right)$ & $( 14 , 1 , 3 )$ & $\left( \includegraphics[scale=.25]{Bee.png} \times \includegraphics[scale=.25]{One.png} \right)$ & $( 7 , 2 , 1 )$\\
+\hline
+$\left( \includegraphics[scale=.25]{Bee.png} \times \includegraphics[scale=.25]{Aye.png} \right)$ & $( 13 , 2 , 2 )$ & $\left( \includegraphics[scale=.25]{Bee.png} \times \includegraphics[scale=.25]{DownRight.png} \right)$ & $( 4 , 3 , 2 )$ & $\left( \includegraphics[scale=.25]{Bee.png} \times \includegraphics[scale=.25]{left.png} \right)$ & $( 1 , 3 , 0 )$ & $\left( \includegraphics[scale=.25]{Bee.png} \times \includegraphics[scale=.25]{Two.png} \right)$ & $( 10 , 3 , 1 )$\\
+\hline
+$\left( \includegraphics[scale=.25]{Bee.png} \times \includegraphics[scale=.25]{up.png} \right)$ & $( 3 , 3 , 3 )$ & $\left( \includegraphics[scale=.25]{Bee.png} \times \includegraphics[scale=.25]{Three.png} \right)$ & $( 2 , 3 , 1 )$ & $\left( \includegraphics[scale=.25]{Bee.png} \times \includegraphics[scale=.25]{Four.png} \right)$ & $( 5 , 0 , 2 )$ & $\left( \includegraphics[scale=.25]{Bee.png} \times \includegraphics[scale=.25]{AllOne.png} \right)$ & $( 6 , 1 , 3 )$\\
+\hline
+\end{tabular}}
+\end{table}
+
+\vspace{-7mm}
+
+\begin{table}[H]
+\makebox[\textwidth][c]{
+\begin{tabular}{|c|c|c|c|c|c|c|c|}
+\hline
+$b$-cube & Handle & $b$-cube & Handle & $b$-cube & Handle & $b$-cube & Handle\\
+\hline
+\hline
+$\left( \includegraphics[scale=.25]{right.png} \times \includegraphics[scale=.25]{AllZero.png} \right)$ & $(5,2,3)$ & $\left( \includegraphics[scale=.25]{right.png} \times \includegraphics[scale=.25]{Dee.png} \right)$ & $( 4 , 1 , 3 )$ & $\left( \includegraphics[scale=.25]{right.png} \times \includegraphics[scale=.25]{Cee.png} \right)$ & $( 1 , 1 , 1 )$ & $\left( \includegraphics[scale=.25]{right.png} \times \includegraphics[scale=.25]{down.png} \right)$ & $( 2 , 1 , 2 )$\\
+\hline
+$\left( \includegraphics[scale=.25]{right.png} \times \includegraphics[scale=.25]{Bee.png} \right)$ & $( 9 , 3 , 1 )$ & $\left( \includegraphics[scale=.25]{right.png} \times \includegraphics[scale=.25]{right.png} \right)$ & $( 0 , 1 , 1 )$ & $\left( \includegraphics[scale=.25]{right.png} \times \includegraphics[scale=.25]{UpRight.png} \right)$ & $( 7 , 0 , 2 )$ & $\left( \includegraphics[scale=.25]{right.png} \times \includegraphics[scale=.25]{One.png} \right)$ & $( 12 , 1 , 3 )$\\
+\hline
+$\left( \includegraphics[scale=.25]{right.png} \times \includegraphics[scale=.25]{Aye.png} \right)$ & $( 6 , 3 , 0 )$ & $\left( \includegraphics[scale=.25]{right.png} \times \includegraphics[scale=.25]{DownRight.png} \right)$ & $( 13 , 0 , 3 )$ & $\left( \includegraphics[scale=.25]{right.png} \times \includegraphics[scale=.25]{left.png} \right)$ & $( 10 , 1 , 2 )$ & $\left( \includegraphics[scale=.25]{right.png} \times \includegraphics[scale=.25]{Two.png} \right)$ & $( 3 , 1 , 0 )$\\
+\hline
+$\left( \includegraphics[scale=.25]{right.png} \times \includegraphics[scale=.25]{up.png} \right)$ & $( 8 , 1 , 1 )$ & $\left( \includegraphics[scale=.25]{right.png} \times \includegraphics[scale=.25]{Three.png} \right)$ & $( 11 , 3 , 0 )$ & $\left( \includegraphics[scale=.25]{right.png} \times \includegraphics[scale=.25]{Four.png} \right)$ & $( 14 , 3 , 0 )$ & $\left( \includegraphics[scale=.25]{right.png} \times \includegraphics[scale=.25]{AllOne.png} \right)$ & $( 15 , 2 , 2 )$\\
+\hline
+\end{tabular}}
+\end{table}
+
+\vspace{-5mm}
+
+\begin{table}[H]
+\makebox[\textwidth][c]{
+\begin{tabular}{|c|c|c|c|c|c|c|c|}
+\hline
+$b$-cube & Handle & $b$-cube & Handle & $b$-cube & Handle & $b$-cube & Handle\\
+\hline
+\hline
+$\left( \includegraphics[scale=.25]{UpRight.png} \times \includegraphics[scale=.25]{AllZero.png} \right)$ & $( 2 , 0 , 3 )$ & $\left( \includegraphics[scale=.25]{UpRight.png} \times \includegraphics[scale=.25]{Dee.png} \right)$ & $( 1 , 0 , 2 )$ & $\left( \includegraphics[scale=.25]{UpRight.png} \times \includegraphics[scale=.25]{Cee.png} \right)$ & $( 14 , 2 , 1 )$ & $\left( \includegraphics[scale=.25]{UpRight.png} \times \includegraphics[scale=.25]{down.png} \right)$ & $( 15 , 1 , 3 )$\\
+\hline
+$\left( \includegraphics[scale=.25]{UpRight.png} \times \includegraphics[scale=.25]{Bee.png} \right)$ & $( 6 , 2 , 1 )$ & $\left( \includegraphics[scale=.25]{UpRight.png} \times \includegraphics[scale=.25]{right.png} \right)$ & $( 13 , 3 , 0 )$ & $\left( \includegraphics[scale=.25]{UpRight.png} \times \includegraphics[scale=.25]{UpRight.png} \right)$ & $( 0 , 0 , 2 )$ & $\left( \includegraphics[scale=.25]{UpRight.png} \times \includegraphics[scale=.25]{One.png} \right)$ & $( 9 , 2 , 2 )$\\
+\hline
+$\left( \includegraphics[scale=.25]{UpRight.png} \times \includegraphics[scale=.25]{Aye.png} \right)$ & $( 3 , 0 , 1 )$ & $\left( \includegraphics[scale=.25]{UpRight.png} \times \includegraphics[scale=.25]{DownRight.png} \right)$ & $( 10 , 0 , 3 )$ & $\left( \includegraphics[scale=.25]{UpRight.png} \times \includegraphics[scale=.25]{left.png} \right)$ & $( 7 , 3 , 3 )$ & $\left( \includegraphics[scale=.25]{UpRight.png} \times \includegraphics[scale=.25]{Two.png} \right)$ & $( 12 , 0 , 0 )$\\
+\hline
+$\left( \includegraphics[scale=.25]{UpRight.png} \times \includegraphics[scale=.25]{up.png} \right)$ & $( 5 , 1 , 0 )$ & $\left( \includegraphics[scale=.25]{UpRight.png} \times \includegraphics[scale=.25]{Three.png} \right)$ & $( 4 , 0 , 0 )$ & $\left( \includegraphics[scale=.25]{UpRight.png} \times \includegraphics[scale=.25]{Four.png} \right)$ & $( 11 , 2 , 1 )$ & $\left( \includegraphics[scale=.25]{UpRight.png} \times \includegraphics[scale=.25]{AllOne.png} \right)$ & $( 8 , 0 , 2 )$\\
+\hline
+\end{tabular}}
+\end{table}
+
+\vspace{-5mm}
+
+\begin{table}[H]
+\makebox[\textwidth][c]{
+\begin{tabular}{|c|c|c|c|c|c|c|c|}
+\hline
+$b$-cube & Handle & $b$-cube & Handle & $b$-cube & Handle & $b$-cube & Handle\\
+\hline
+\hline
+$\left( \includegraphics[scale=.25]{One.png} \times \includegraphics[scale=.25]{AllZero.png} \right)$ & $( 9 , 0 , 1 )$ & $\left( \includegraphics[scale=.25]{One.png} \times \includegraphics[scale=.25]{Dee.png} \right)$ & $( 8 , 2 , 1 )$ & $\left( \includegraphics[scale=.25]{One.png} \times \includegraphics[scale=.25]{Cee.png} \right)$ & $( 5 , 3 , 3 )$ & $\left( \includegraphics[scale=.25]{One.png} \times \includegraphics[scale=.25]{down.png} \right)$ & $( 6 , 0 , 0 )$\\
+\hline
+$\left( \includegraphics[scale=.25]{One.png} \times \includegraphics[scale=.25]{Bee.png} \right)$ & $( 13 , 1 , 3 )$ & $\left( \includegraphics[scale=.25]{One.png} \times \includegraphics[scale=.25]{right.png} \right)$ & $( 4 , 2 , 3 )$ & $\left( \includegraphics[scale=.25]{One.png} \times \includegraphics[scale=.25]{UpRight.png} \right)$ & $( 11 , 0 , 0 )$ & $\left( \includegraphics[scale=.25]{One.png} \times \includegraphics[scale=.25]{One.png} \right)$ & $( 0 , 2 , 1 )$\\
+\hline
+$\left( \includegraphics[scale=.25]{One.png} \times \includegraphics[scale=.25]{Aye.png} \right)$ & $( 10 , 2 , 2 )$ & $\left( \includegraphics[scale=.25]{One.png} \times \includegraphics[scale=.25]{DownRight.png} \right)$ & $( 1 , 2 , 1 )$ & $\left( \includegraphics[scale=.25]{One.png} \times \includegraphics[scale=.25]{left.png} \right)$ & $( 14 , 0 , 0 )$ & $\left( \includegraphics[scale=.25]{One.png} \times \includegraphics[scale=.25]{Two.png} \right)$ & $( 7 , 1 , 2 )$\\
+\hline
+$\left( \includegraphics[scale=.25]{One.png} \times \includegraphics[scale=.25]{up.png} \right)$ & $( 12 , 2 , 3 )$ & $\left( \includegraphics[scale=.25]{One.png} \times \includegraphics[scale=.25]{Three.png} \right)$ & $( 15 , 3 , 2 )$ & $\left( \includegraphics[scale=.25]{One.png} \times \includegraphics[scale=.25]{Four.png} \right)$ & $( 2 , 2 , 2 )$ & $\left( \includegraphics[scale=.25]{One.png} \times \includegraphics[scale=.25]{AllOne.png} \right)$ & $( 3 , 2 , 0 )$\\
+\hline
+\end{tabular}}
+\end{table}
+
+\vspace{-5mm}
+
+\begin{table}[H]
+\makebox[\textwidth][c]{
+\begin{tabular}{|c|c|c|c|c|c|c|c|}
+\hline
+$b$-cube & Handle & $b$-cube & Handle & $b$-cube & Handle & $b$-cube & Handle\\
+\hline
+\hline
+$\left( \includegraphics[scale=.25]{Aye.png} \times \includegraphics[scale=.25]{AllZero.png} \right)$ & $( 3 , 0 , 2 )$ & $\left( \includegraphics[scale=.25]{Aye.png} \times \includegraphics[scale=.25]{Dee.png} \right)$ & $( 2 , 0 , 0 )$ & $\left( \includegraphics[scale=.25]{Aye.png} \times \includegraphics[scale=.25]{Cee.png} \right)$ & $( 15 , 1 , 0 )$ & $\left( \includegraphics[scale=.25]{Aye.png} \times \includegraphics[scale=.25]{down.png} \right)$ & $( 12 , 0 , 1 )$\\
+\hline
+$\left( \includegraphics[scale=.25]{Aye.png} \times \includegraphics[scale=.25]{Bee.png} \right)$ & $( 7 , 3 , 0 )$ & $\left( \includegraphics[scale=.25]{Aye.png} \times \includegraphics[scale=.25]{right.png} \right)$ & $( 14 , 2 , 2 )$ & $\left( \includegraphics[scale=.25]{Aye.png} \times \includegraphics[scale=.25]{UpRight.png} \right)$ & $( 1 , 0 , 3 )$ & $\left( \includegraphics[scale=.25]{Aye.png} \times \includegraphics[scale=.25]{One.png} \right)$ & $( 10 , 0 , 0 )$\\
+\hline
+$\left( \includegraphics[scale=.25]{Aye.png} \times \includegraphics[scale=.25]{Aye.png} \right)$ & $( 0 , 0 , 3 )$ & $\left( \includegraphics[scale=.25]{Aye.png} \times \includegraphics[scale=.25]{DownRight.png} \right)$ & $( 11 , 2 , 2 )$ & $\left( \includegraphics[scale=.25]{Aye.png} \times \includegraphics[scale=.25]{left.png} \right)$ & $( 4 , 0 , 1 )$ & $\left( \includegraphics[scale=.25]{Aye.png} \times \includegraphics[scale=.25]{Two.png} \right)$ & $( 13 , 3 , 1 )$\\
+\hline
+$\left( \includegraphics[scale=.25]{Aye.png} \times \includegraphics[scale=.25]{up.png} \right)$ & $( 6 , 2 , 2 )$ & $\left( \includegraphics[scale=.25]{Aye.png} \times \includegraphics[scale=.25]{Three.png} \right)$ & $( 5 , 1 , 1 )$ & $\left( \includegraphics[scale=.25]{Aye.png} \times \includegraphics[scale=.25]{Four.png} \right)$ & $( 8 , 0 , 3 )$ & $\left( \includegraphics[scale=.25]{Aye.png} \times \includegraphics[scale=.25]{AllOne.png} \right)$ & $( 9 , 2 , 3 )$\\
+\hline
+\end{tabular}}
+\end{table}
+
+\vspace{-5mm}
+
+\begin{table}[H]
+\makebox[\textwidth][c]{
+\begin{tabular}{|c|c|c|c|c|c|c|c|}
+\hline
+$b$-cube & Handle & $b$-cube & Handle & $b$-cube & Handle & $b$-cube & Handle\\
+\hline
+\hline
+$\left( \includegraphics[scale=.25]{DownRight.png} \times \includegraphics[scale=.25]{AllZero.png} \right)$ & $( 8 , 2 , 0 )$ & $\left( \includegraphics[scale=.25]{DownRight.png} \times \includegraphics[scale=.25]{Dee.png} \right)$ & $( 11 , 0 , 3 )$ & $\left( \includegraphics[scale=.25]{DownRight.png} \times \includegraphics[scale=.25]{Cee.png} \right)$ & $( 4 , 2 , 2 )$ & $\left( \includegraphics[scale=.25]{DownRight.png} \times \includegraphics[scale=.25]{down.png} \right)$ & $( 5 , 3 , 2 )$\\
+\hline
+$\left( \includegraphics[scale=.25]{DownRight.png} \times \includegraphics[scale=.25]{Bee.png} \right)$ & $( 12 , 2 , 2 )$ & $\left( \includegraphics[scale=.25]{DownRight.png} \times \includegraphics[scale=.25]{right.png} \right)$ & $( 7 , 1 , 1 )$ & $\left( \includegraphics[scale=.25]{DownRight.png} \times \includegraphics[scale=.25]{UpRight.png} \right)$ & $( 10 , 2 , 1 )$ & $\left( \includegraphics[scale=.25]{DownRight.png} \times \includegraphics[scale=.25]{One.png} \right)$ & $( 3 , 2 , 3 )$\\
+\hline
+$\left( \includegraphics[scale=.25]{DownRight.png} \times \includegraphics[scale=.25]{Aye.png} \right)$ & $( 9 , 0 , 0 )$ & $\left( \includegraphics[scale=.25]{DownRight.png} \times \includegraphics[scale=.25]{DownRight.png} \right)$ & $( 0 , 2 , 0 )$ & $\left( \includegraphics[scale=.25]{DownRight.png} \times \includegraphics[scale=.25]{left.png} \right)$ & $( 13 , 1 , 2 )$ & $\left( \includegraphics[scale=.25]{DownRight.png} \times \includegraphics[scale=.25]{Two.png} \right)$ & $( 6 , 0 , 3 )$\\
+\hline
+$\left( \includegraphics[scale=.25]{DownRight.png} \times \includegraphics[scale=.25]{up.png} \right)$ & $( 15 , 3 , 1 )$ & $\left( \includegraphics[scale=.25]{DownRight.png} \times \includegraphics[scale=.25]{Three.png} \right)$ & $( 14 , 0 , 3 )$ & $\left( \includegraphics[scale=.25]{DownRight.png} \times \includegraphics[scale=.25]{Four.png} \right)$ & $( 1 , 2 , 0 )$ & $\left( \includegraphics[scale=.25]{DownRight.png} \times \includegraphics[scale=.25]{AllOne.png} \right)$ & $( 2 , 2 , 1 )$\\
+\hline
+\end{tabular}}
+\end{table}
+
+\vspace{-5mm}
+
+\begin{table}[H]
+\makebox[\textwidth][c]{
+\begin{tabular}{|c|c|c|c|c|c|c|c|}
+\hline
+$b$-cube & Handle & $b$-cube & Handle & $b$-cube & Handle & $b$-cube & Handle\\
+\hline
+\hline
+$\left( \includegraphics[scale=.25]{left.png} \times \includegraphics[scale=.25]{AllZero.png} \right)$ & $( 15 , 0 , 0 )$ & $\left( \includegraphics[scale=.25]{left.png} \times \includegraphics[scale=.25]{Dee.png} \right)$ & $( 14 , 1 , 2 )$ & $\left( \includegraphics[scale=.25]{left.png} \times \includegraphics[scale=.25]{Cee.png} \right)$ & $( 11 , 1 , 2 )$ & $\left( \includegraphics[scale=.25]{left.png} \times \includegraphics[scale=.25]{down.png} \right)$ & $( 8 , 3 , 3 )$\\
+\hline
+$\left( \includegraphics[scale=.25]{left.png} \times \includegraphics[scale=.25]{Bee.png} \right)$ & $( 3 , 3 , 2 )$ & $\left( \includegraphics[scale=.25]{left.png} \times \includegraphics[scale=.25]{right.png} \right)$ & $( 10 , 3 , 0 )$ & $\left( \includegraphics[scale=.25]{left.png} \times \includegraphics[scale=.25]{UpRight.png} \right)$ & $( 13 , 2 , 1 )$ & $\left( \includegraphics[scale=.25]{left.png} \times \includegraphics[scale=.25]{One.png} \right)$ & $( 6 , 1 , 2 )$\\
+\hline
+$\left( \includegraphics[scale=.25]{left.png} \times \includegraphics[scale=.25]{Aye.png} \right)$ & $( 12 , 3 , 1 )$ & $\left( \includegraphics[scale=.25]{left.png} \times \includegraphics[scale=.25]{DownRight.png} \right)$ & $( 7 , 2 , 0 )$ & $\left( \includegraphics[scale=.25]{left.png} \times \includegraphics[scale=.25]{left.png} \right)$ & $( 0 , 3 , 3 )$ & $\left( \includegraphics[scale=.25]{left.png} \times \includegraphics[scale=.25]{Two.png} \right)$ & $( 9 , 1 , 3 )$\\
+\hline
+$\left( \includegraphics[scale=.25]{left.png} \times \includegraphics[scale=.25]{up.png} \right)$ & $( 2 , 3 , 0 )$ & $\left( \includegraphics[scale=.25]{left.png} \times \includegraphics[scale=.25]{Three.png} \right)$ & $( 1 , 3 , 3 )
+$ & $\left( \includegraphics[scale=.25]{left.png} \times \includegraphics[scale=.25]{Four.png} \right)$ & $( 4 , 3 , 1 )$ & $\left( \includegraphics[scale=.25]{left.png} \times \includegraphics[scale=.25]{AllOne.png} \right)$ & $( 5 , 0 , 1 )$\\
+\hline
+\end{tabular}}
+\end{table}
+
+\vspace{-7mm}
+
+\begin{table}[H]
+\makebox[\textwidth][c]{
+\begin{tabular}{|c|c|c|c|c|c|c|c|}
+\hline
+$b$-cube & Handle & $b$-cube & Handle & $b$-cube & Handle & $b$-cube & Handle\\
+\hline
+\hline
+$\left( \includegraphics[scale=.25]{Two.png} \times \includegraphics[scale=.25]{AllZero.png} \right)$ & $( 6 , 3 , 1 )$ & $\left( \includegraphics[scale=.25]{Two.png} \times \includegraphics[scale=.25]{Dee.png} \right)$ & $( 5 , 2 , 0 )$ & $\left( \includegraphics[scale=.25]{Two.png} \times \includegraphics[scale=.25]{Cee.png} \right)$ & $( 2 , 1 , 3 )$ & $\left( \includegraphics[scale=.25]{Two.png} \times \includegraphics[scale=.25]{down.png} \right)$ & $( 3 , 1 , 1 )$\\
+\hline
+$\left( \includegraphics[scale=.25]{Two.png} \times \includegraphics[scale=.25]{Bee.png} \right)$ & $( 10 , 1 , 3 )$ & $\left( \includegraphics[scale=.25]{Two.png} \times \includegraphics[scale=.25]{right.png} \right)$ & $( 1 , 1 , 2 )$ & $\left( \includegraphics[scale=.25]{Two.png} \times \includegraphics[scale=.25]{UpRight.png} \right)$ & $( 4 , 1 , 0 )$ & $\left( \includegraphics[scale=.25]{Two.png} \times \includegraphics[scale=.25]{One.png} \right)$ & $( 13 , 0 , 0 )$\\
+\hline
+$\left( \includegraphics[scale=.25]{Two.png} \times \includegraphics[scale=.25]{Aye.png} \right)$ & $( 7 , 0 , 3 )$ & $\left( \includegraphics[scale=.25]{Two.png} \times \includegraphics[scale=.25]{DownRight.png} \right)$ & $( 14 , 3 , 1 )$ & $\left( \includegraphics[scale=.25]{Two.png} \times \includegraphics[scale=.25]{left.png} \right)$ & $( 11 , 3 , 1 )$ & $\left( \includegraphics[scale=.25]{Two.png} \times \includegraphics[scale=.25]{Two.png} \right)$ & $( 0 , 1 , 2 )$\\
+\hline
+$\left( \includegraphics[scale=.25]{Two.png} \times \includegraphics[scale=.25]{up.png} \right)$ & $( 9 , 3 , 2 )$ & $\left( \includegraphics[scale=.25]{Two.png} \times \includegraphics[scale=.25]{Three.png} \right)$ & $( 8 , 1 , 2 )$ & $\left( \includegraphics[scale=.25]{Two.png} \times \includegraphics[scale=.25]{Four.png} \right)$ & $( 15 , 2 , 3 )$ & $\left( \includegraphics[scale=.25]{Two.png} \times \includegraphics[scale=.25]{AllOne.png} \right)$ & $( 12 , 1 , 0 )$\\
+\hline
+\end{tabular}}
+\end{table}
+
+\vspace{-7mm}
+
+\begin{table}[H]
+\makebox[\textwidth][c]{
+\begin{tabular}{|c|c|c|c|c|c|c|c|}
+\hline
+$b$-cube & Handle & $b$-cube & Handle & $b$-cube & Handle & $b$-cube & Handle\\
+\hline
+\hline
+$\left( \includegraphics[scale=.25]{up.png} \times \includegraphics[scale=.25]{AllZero.png} \right)$ & $( 13 , 2 , 3 )$ & $\left( \includegraphics[scale=.25]{up.png} \times \includegraphics[scale=.25]{Dee.png} \right)$ & $( 12 , 3 , 3 )$ & $\left( \includegraphics[scale=.25]{up.png} \times \includegraphics[scale=.25]{Cee.png} \right)$ & $( 9 , 1 , 1 )$ & $\left( \includegraphics[scale=.25]{up.png} \times \includegraphics[scale=.25]{down.png} \right)$ & $( 10 , 3 , 2 )$\\
+\hline
+$\left( \includegraphics[scale=.25]{up.png} \times \includegraphics[scale=.25]{Bee.png} \right)$ & $( 1 , 3 , 1 )$ & $\left( \includegraphics[scale=.25]{up.png} \times \includegraphics[scale=.25]{right.png} \right)$ & $( 8 , 3 , 1 )$ & $\left( \includegraphics[scale=.25]{up.png} \times \includegraphics[scale=.25]{UpRight.png} \right)$ & $( 15 , 0 , 2 )$ & $\left( \includegraphics[scale=.25]{up.png} \times \includegraphics[scale=.25]{One.png} \right)$ & $( 4 , 3 , 3 )$\\
+\hline
+$\left( \includegraphics[scale=.25]{up.png} \times \includegraphics[scale=.25]{Aye.png} \right)$ & $( 14 , 1 , 0 )$ & $\left( \includegraphics[scale=.25]{up.png} \times \includegraphics[scale=.25]{DownRight.png} \right)$ & $( 5 , 0 , 3 )$ & $\left( \includegraphics[scale=.25]{up.png} \times \includegraphics[scale=.25]{left.png} \right)$ & $( 2 , 3 , 2 )$ & $\left( \includegraphics[scale=.25]{up.png} \times \includegraphics[scale=.25]{Two.png} \right)$ & $( 11 , 1 , 0 )$\\
+\hline
+$\left( \includegraphics[scale=.25]{up.png} \times \includegraphics[scale=.25]{up.png} \right)$ & $( 0 , 3 , 1 )$ & $\left( \includegraphics[scale=.25]{up.png} \times \includegraphics[scale=.25]{Three.png} \right)$ & $( 3 , 3 , 0 )$ & $\left( \includegraphics[scale=.25]{up.png} \times \includegraphics[scale=.25]{Four.png} \right)$ & $( 6 , 1 , 0 )$ & $\left( \includegraphics[scale=.25]{up.png} \times \includegraphics[scale=.25]{AllOne.png} \right)$ & $( 7 , 2 , 2 )$\\
+\hline
+\end{tabular}}
+\end{table}
+
+\vspace{-7mm}
+
+\begin{table}[H]
+\makebox[\textwidth][c]{
+\begin{tabular}{|c|c|c|c|c|c|c|c|}
+\hline
+$b$-cube & Handle & $b$-cube & Handle & $b$-cube & Handle & $b$-cube & Handle\\
+\hline
+\hline
+$\left( \includegraphics[scale=.25]{Three.png} \times \includegraphics[scale=.25]{AllZero.png} \right)$ & $( 14 , 1 , 1 )$ & $\left( \includegraphics[scale=.25]{Three.png} \times \includegraphics[scale=.25]{Dee.png} \right)$ & $( 13 , 2 , 0 )$ & $\left( \includegraphics[scale=.25]{Three.png} \times \includegraphics[scale=.25]{Cee.png} \right)$ & $( 10 , 3 , 3 )$ & $\left( \includegraphics[scale=.25]{Three.png} \times \includegraphics[scale=.25]{down.png} \right)$ & $( 11 , 1 , 1 )$\\
+\hline
+$\left( \includegraphics[scale=.25]{Three.png} \times \includegraphics[scale=.25]{Bee.png} \right)$ & $( 2 , 3 , 3 )$ & $\left( \includegraphics[scale=.25]{Three.png} \times \includegraphics[scale=.25]{right.png} \right)$ & $( 9 , 1 , 2 )$ & $\left( \includegraphics[scale=.25]{Three.png} \times \includegraphics[scale=.25]{UpRight.png} \right)$ & $( 12 , 3 , 0 )$ & $\left( \includegraphics[scale=.25]{Three.png} \times \includegraphics[scale=.25]{One.png} \right)$ & $( 5 , 0 , 0 )$\\
+\hline
+$\left( \includegraphics[scale=.25]{Three.png} \times \includegraphics[scale=.25]{Aye.png} \right)$ & $( 15 , 0 , 3 )$ & $\left( \includegraphics[scale=.25]{Three.png} \times \includegraphics[scale=.25]{DownRight.png} \right)$ & $( 6 , 1 , 1 )$ & $\left( \includegraphics[scale=.25]{Three.png} \times \includegraphics[scale=.25]{left.png} \right)$ & $( 3 , 3 , 1 )$ & $\left( \includegraphics[scale=.25]{Three.png} \times \includegraphics[scale=.25]{Two.png} \right)$ & $( 8 , 3 , 2 )$\\
+\hline
+$\left( \includegraphics[scale=.25]{Three.png} \times \includegraphics[scale=.25]{up.png} \right)$ & $( 1 , 3 , 2 )$ & $\left( \includegraphics[scale=.25]{Three.png} \times \includegraphics[scale=.25]{Three.png} \right)$ & $( 0 , 3 , 2 )$ & $\left( \includegraphics[scale=.25]{Three.png} \times \includegraphics[scale=.25]{Four.png} \right)$ & $( 7 , 2 , 3 )$ & $\left( \includegraphics[scale=.25]{Three.png} \times \includegraphics[scale=.25]{AllOne.png} \right)$ & $( 4 , 3 , 0 )$\\
+\hline
+\end{tabular}}
+\end{table}
+
+\vspace{-7mm}
+
+\begin{table}[H]
+\makebox[\textwidth][c]{
+\begin{tabular}{|c|c|c|c|c|c|c|c|}
+\hline
+$b$-cube & Handle & $b$-cube & Handle & $b$-cube & Handle & $b$-cube & Handle\\
+\hline
+\hline
+$\left( \includegraphics[scale=.25]{Four.png} \times \includegraphics[scale=.25]{AllZero.png} \right)$ & $( 11 , 0 , 2 )$ & $\left( \includegraphics[scale=.25]{Four.png} \times \includegraphics[scale=.25]{Dee.png} \right)$ & $( 10 , 2 , 0 )$ & $\left( \includegraphics[scale=.25]{Four.png} \times \includegraphics[scale=.25]{Cee.png} \right)$ & $( 7 , 1 , 0 )$ & $\left( \includegraphics[scale=.25]{Four.png} \times \includegraphics[scale=.25]{down.png} \right)$ & $( 4 , 2 , 1 )$\\
+\hline
+$\left( \includegraphics[scale=.25]{Four.png} \times \includegraphics[scale=.25]{Bee.png} \right)$ & $( 15 , 3 , 0 )$ & $\left( \includegraphics[scale=.25]{Four.png} \times \includegraphics[scale=.25]{right.png} \right)$ & $( 6 , 0 , 2 )$ & $\left( \includegraphics[scale=.25]{Four.png} \times \includegraphics[scale=.25]{UpRight.png} \right)$ & $( 9 , 0 , 3 )$ & $\left( \includegraphics[scale=.25]{Four.png} \times \includegraphics[scale=.25]{One.png} \right)$ & $( 2 , 2 , 0 )$\\
+\hline
+$\left( \includegraphics[scale=.25]{Four.png} \times \includegraphics[scale=.25]{Aye.png} \right)$ & $( 8 , 2 , 3 )$ & $\left( \includegraphics[scale=.25]{Four.png} \times \includegraphics[scale=.25]{DownRight.png} \right)$ & $( 3 , 2 , 2 )$ & $\left( \includegraphics[scale=.25]{Four.png} \times \includegraphics[scale=.25]{left.png} \right)$ & $( 12 , 2 , 1 )$ & $\left( \includegraphics[scale=.25]{Four.png} \times \includegraphics[scale=.25]{Two.png} \right)$ & $( 5 , 3 , 1 )$\\
+\hline
+$\left( \includegraphics[scale=.25]{Four.png} \times \includegraphics[scale=.25]{up.png} \right)$ & $( 14 , 0 , 2 )$ & $\left( \includegraphics[scale=.25]{Four.png} \times \includegraphics[scale=.25]{Three.png} \right)$ & $( 13 , 1 , 1 )$ & $\left( \includegraphics[scale=.25]{Four.png} \times \includegraphics[scale=.25]{Four.png} \right)$ & $( 0 , 2 , 3 )$ & $\left( \includegraphics[scale=.25]{Four.png} \times \includegraphics[scale=.25]{AllOne.png} \right)$ & $( 1 , 2 , 3 )$\\
+\hline
+\end{tabular}}
+\end{table}
+
+\vspace{-7mm}
+
+\begin{table}[H]
+\makebox[\textwidth][c]{
+\begin{tabular}{|c|c|c|c|c|c|c|c|}
+\hline
+$b$-cube & Handle & $b$-cube & Handle & $b$-cube & Handle & $b$-cube & Handle\\
+\hline
+\hline
+$\left( \includegraphics[scale=.25]{AllOne.png} \times \includegraphics[scale=.25]{AllZero.png} \right)$ & $( 10 , 2 , 3 )$ & $\left( \includegraphics[scale=.25]{AllOne.png} \times \includegraphics[scale=.25]{Dee.png} \right)$ & $( 9 , 0 , 2 )$ & $\left( \includegraphics[scale=.25]{AllOne.png} \times \includegraphics[scale=.25]{Cee.png} \right)$ & $( 6 , 0 , 1 )$ & $\left( \includegraphics[scale=.25]{AllOne.png} \times \includegraphics[scale=.25]{down.png} \right)$ & $( 7 , 1 , 3 )$\\
+\hline
+$\left( \includegraphics[scale=.25]{AllOne.png} \times \includegraphics[scale=.25]{Bee.png} \right)$ & $( 14 , 0 , 1 )$ & $\left( \includegraphics[scale=.25]{AllOne.png} \times \includegraphics[scale=.25]{right.png} \right)$ & $( 5 , 3 , 0 )$ & $\left( \includegraphics[scale=.25]{AllOne.png} \times \includegraphics[scale=.25]{UpRight.png} \right)$ & $( 8 , 2 , 2 )$ & $\left( \includegraphics[scale=.25]{AllOne.png} \times \includegraphics[scale=.25]{One.png} \right)$ & $( 1 , 2 , 2 )$\\
+\hline
+$\left( \includegraphics[scale=.25]{AllOne.png} \times \includegraphics[scale=.25]{Aye.png} \right)$ & $( 11 , 0 , 1 )$ & $\left( \includegraphics[scale=.25]{AllOne.png} \times \includegraphics[scale=.25]{DownRight.png} \right)$ & $( 2 , 2 , 3 )$ & $\left( \includegraphics[scale=.25]{AllOne.png} \times \includegraphics[scale=.25]{left.png} \right)$ & $( 15 , 3 , 3 )$ & $\left( \includegraphics[scale=.25]{AllOne.png} \times \includegraphics[scale=.25]{Two.png} \right)$ & $( 4 , 2 , 0 )$\\
+\hline
+$\left( \includegraphics[scale=.25]{AllOne.png} \times \includegraphics[scale=.25]{up.png} \right)$ & $( 13 , 1 , 0 )$ & $\left( \includegraphics[scale=.25]{AllOne.png} \times \includegraphics[scale=.25]{Three.png} \right)$ & $( 12 , 2 , 0 )$ & $\left( \includegraphics[scale=.25]{AllOne.png} \times \includegraphics[scale=.25]{Four.png} \right)$ & $( 3 , 2 , 1 )$ & $\left( \includegraphics[scale=.25]{AllOne.png} \times \includegraphics[scale=.25]{AllOne.png} \right)$ & $( 0 , 2 , 2 )$\\
+\hline
+\end{tabular}}
+\end{table}
+
+\clearpage 
+\subsection{Tools for Possible Alternative Constructions}
+
+Could $16 \times 4 \times 4$ De Bruijn arrays of $b$-cubes exist which are not generated by the construction method outlined in section 5.1? The following representations of $4 \times 4$ toroidal arrays seem like prime candidates for study.
+
+\begin{figure}[H]
+\noindent
+\makebox[\textwidth][c]{$A = \begin{bmatrix} 
+0 & 0 & 0 & 1\\
+0 & 0 & 0 & 1\\
+0 & 0 & 0 & 1 \\
+1 & 1 & 1 & 0 \\
+\end{bmatrix}
+\quad \xrightarrow[\text{map}] \quad \quad
+\begin{tabular}{| c c || c c || c c || c c|}
+\hline
+0 & 0 & 0 & 0 & 0 & 1 & 1 & 0\\
+0 & 0 & 0 & 0 & 0 & 1 & 1 & 0\\
+\hline
+\hline
+0 & 0 & 0 & 0 & 0 & 1 & 1 & 0\\
+0 & 0 & 0 & 0 & 0 & 1 & 1 & 0\\
+\hline
+\hline
+0 & 0 & 0 & 0 & 0 & 1 & 1 & 0\\
+1 & 1 & 1 & 1 & 1 & 0 & 0 & 1\\
+\hline
+\hline
+1 & 1 & 1 & 1 & 1 & 0 & 0 & 1\\
+0 & 0 & 0 & 0 & 0 & 1 & 1 & 0\\
+\hline
+\end{tabular}
+\quad \xrightarrow[\text{hex}] \quad \quad
+\begin{bmatrix} 
+\includegraphics[scale=.25]{AllZero.png} & \includegraphics[scale=.25]{AllZero.png} & \includegraphics[scale=.25]{right.png} & \includegraphics[scale=.25]{left.png}\\
+\includegraphics[scale=.25]{AllZero.png} & \includegraphics[scale=.25]{AllZero.png} & \includegraphics[scale=.25]{right.png} & \includegraphics[scale=.25]{left.png}\\
+\includegraphics[scale=.25]{down.png} & \includegraphics[scale=.25]{down.png} & \includegraphics[scale=.25]{UpRight.png} & \includegraphics[scale=.25]{DownRight.png}\\
+\includegraphics[scale=.25]{up.png} & \includegraphics[scale=.25]{up.png} & \includegraphics[scale=.25]{DownRight.png} & \includegraphics[scale=.25]{UpRight.png}\\
+\end{bmatrix}$}
+\caption{Containing hex-tiles with an even number of zeroes}
+\label{arrayA}
+\end{figure}
+
+\begin{figure}[H]
+\noindent
+\makebox[\textwidth][c]{$B = \begin{bmatrix} 
+1 & 1 & 1 & 0\\
+1 & 1 & 1 & 0\\
+1 & 1 & 1 & 0\\
+0 & 0 & 0 & 1 \\
+\end{bmatrix}
+\quad \xrightarrow[\text{map}] \quad \xrightarrow[\text{hex}] \quad \quad
+\begin{bmatrix} 
+\includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{left.png} & \includegraphics[scale=.25]{right.png}\\
+\includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{AllOne.png} & \includegraphics[scale=.25]{left.png} & \includegraphics[scale=.25]{right.png}\\
+\includegraphics[scale=.25]{up.png} & \includegraphics[scale=.25]{up.png} & \includegraphics[scale=.25]{DownRight.png} & \includegraphics[scale=.25]{UpRight.png}\\
+\includegraphics[scale=.25]{down.png} & \includegraphics[scale=.25]{down.png} & \includegraphics[scale=.25]{UpRight.png} & \includegraphics[scale=.25]{DownRight.png}\\
+\end{bmatrix}$}
+\caption{The binary inverse of array $A$}
+\label{arrayB}
+\end{figure}
+
+
+\begin{figure}[H]
+\noindent
+\makebox[\textwidth][c]{$C = \begin{bmatrix} 
+1 & 1 & 1 & 0 \\
+1 & 0 & 1 & 1 \\
+1 & 1 & 1 & 0\\
+0 & 1 & 0 & 0\\
+\end{bmatrix}
+\quad \xrightarrow[\text{map}] \quad \quad
+\begin{tabular}{| c c || c c || c c || c c|}
+\hline
+1 & 1 & 1 & 1 & 1 & 0 & 0 & 1\\
+1 & 0 & 0 & 1 & 1 & 1 & 1 & 1\\
+\hline
+\hline
+1 & 0 & 0 & 1 & 1 & 1 & 1 & 1\\
+1 & 1 & 1 & 1 & 1 & 0 & 0 & 1\\
+\hline
+\hline
+1 & 1 & 1 & 1 & 1 & 0 & 0 & 1\\
+0 & 1 & 1 & 0 & 0 & 0 & 0 & 0\\
+\hline
+\hline
+0 & 1 & 1 & 0 & 0 & 0 & 0 & 0\\
+1 & 1 & 1 & 1 & 1 & 0 & 0 & 1\\
+\hline
+\end{tabular}
+\quad \xrightarrow[\text{hex}] \quad \quad
+\begin{bmatrix} 
+\includegraphics[scale=.25]{Four.png} & \includegraphics[scale=.25]{Three.png} & \includegraphics[scale=.25]{Two.png} & \includegraphics[scale=.25]{One.png}\\
+\includegraphics[scale=.25]{Two.png} & \includegraphics[scale=.25]{One.png} & \includegraphics[scale=.25]{Four.png} & \includegraphics[scale=.25]{Three.png}\\
+\includegraphics[scale=.25]{Three.png} & \includegraphics[scale=.25]{Four.png} & \includegraphics[scale=.25]{Aye.png} & \includegraphics[scale=.25]{Bee.png}\\
+\includegraphics[scale=.25]{One.png} & \includegraphics[scale=.25]{Two.png} & \includegraphics[scale=.25]{Cee.png} & \includegraphics[scale=.25]{Dee.png}\\
+\end{bmatrix}$}
+\caption{Containing the hex-tiles with an odd number of zeroes}
+\label{arrayC}
+\end{figure}
+
+
+
+\begin{figure}[H]
+\noindent
+\makebox[\textwidth][c]{$D = \begin{bmatrix} 
+0 & 0 & 0 & 1 \\
+0 & 1 & 0 & 0 \\
+0 & 0 & 0 & 1\\
+1 & 0 & 1 & 1\\
+\end{bmatrix}
+\quad \xrightarrow[\text{map}] \quad \xrightarrow[\text{hex}] \quad \quad
+\begin{bmatrix} 
+\includegraphics[scale=.25]{Dee.png} & \includegraphics[scale=.25]{Cee.png} & \includegraphics[scale=.25]{Bee.png} & \includegraphics[scale=.25]{Aye.png}\\
+\includegraphics[scale=.25]{Bee.png} & \includegraphics[scale=.25]{Aye.png} & \includegraphics[scale=.25]{Dee.png} & \includegraphics[scale=.25]{Cee.png}\\
+\includegraphics[scale=.25]{Cee.png} & \includegraphics[scale=.25]{Dee.png} & \includegraphics[scale=.25]{One.png} & \includegraphics[scale=.25]{Two.png}\\
+\includegraphics[scale=.25]{Aye.png} & \includegraphics[scale=.25]{Bee.png} & \includegraphics[scale=.25]{Three.png} & \includegraphics[scale=.25]{Four.png}\\
+\end{bmatrix}$}
+\caption{The binary inverse of array $C$}
+\label{arrayD}
+\end{figure}
+
+\noindent
+Four copies each of $A$, $B$, $C$, and $D$ would contain the distribution of tiles needed to make a $16 \times 4 \times 4$ De Bruijn array of $b$-cubes. The apparent structure in their design inspires hope that this may be possible, though we have found no example.
+
+\null 
+
+\noindent
+An attempt to generate a $16 \times 4 \times 4$ De Bruijn array of $b$-cubes using $A$, $B$, $C$, and $D$ might begin with the generation of a De Bruijn sequence of two-length four-sequences whose alphabet is $\{A,B,C,D\}$ rather than $\{0,1,2,3\}$. $(AABBCCDDCBADBDAC)$ is an example. 
+Perhaps four copies each of $A$, $B$, $C$, and $D$ could be compiled in that order with offsets in a manner similar to the construction outlined in section 5.1. 
+
+
+
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+\clearpage
+\section{Higher Dimensions}
+
+With an example of a $3D$ De Bruijn array, we could extend the technique outlined in section 5.1 to generate a $4D$ De Bruijn array. We could then use that $4D$ De Bruijn array to generate a $5D$ De Bruijn array, and so on. Let us extend definitions from prior sections to $n$ dimensions to facilitate a proof by induction. 
+
+\null 
+
+\begin{Definition}
+In $n$ dimensions, a \emph{Hyper-Toroidal Array} is an equivalence class of $m_1 \times m_2 \times \dots \times m_n$ arrays under the relation $A \approx B$ if $A$ and $B$ are both $m_1 \times m_2 \times \dots \times m_n$ arrays and there exist integers $x_1, x_2, \dots, x_n \geq 0$ with $x_1 < m_1$, $x_2 < m_2$, $\dots$, and $x_n < m_n$ such that for all entries of $A$ and $B$, $A_{a_1,a_2,\dots,a_n} = B_{b_1,b_2,\dots,b_n}$ with $b_i = a_i + x_i$ mod $m_i$ for all $i$ from 1 to $n$. \end{Definition}
+
+\null 
+
+\begin{Definition}
+An $m_1 \times m_2 \times \dots \times m_n$ hyper-toroidal array $[A]$ \emph{contains} a $d_1 \times d_2 \times \dots \times d_n$ array $B$ (with $d_i \leq m_i$ for all $i$ from 1 to $n$) if there exists an $A \in [A]$ so that $\underset{\substack{\forall \ 1 \leq j \leq n,\\ 0 \leq i < d_j}}{A_{i_j}} = \underset{\substack{\forall \ 1 \leq j \leq n,\\ 0 \leq i < d_j}}{B_{i_j}}.$ In other words, $B$ is in $A$'s former, front, top, left, etcetera corner. 
+
+\null 
+
+\noindent 
+If $A$ uniquely satisfies this property in $[A]$, then $[A]$ contains $B$ \emph{precisely once.}
+\end{Definition}
+
+\null 
+
+\begin{Definition}
+A \emph{$\left(\prod_{i=1}^{n-1} 2^{2^i}\right) \times 4$ De Bruijn array of binary $2^n$-cube sub-arrays} is a $2^{2^{n-1}} \times 2^{2^{n-2}} \times \dots \times 2^{2^2} \times 2^{2^1} \times 4$ hyper-toroidal array containing precisely one of each $\underbrace{2 \times 2 \times \dots \times 2}_{n}$ array of 0s and 1s. 
+\end{Definition}
+
+\null 
+
+\begin{Definition}
+The former, front, top, left, etcetera corner of a $\underbrace{2 \times 2 \times \dots \times 2}_{n}$ array is its $Handle$. 
+\end{Definition}
+
+\null 
+
+\begin{Definition}
+The $Origin$ of a \emph{$\left(\prod_{i=1}^{n-1} 2^{2^i}\right) \times 4$ De Bruijn array of binary $2^n$-cube sub-arrays} is the handle of the binary $\underbrace{2 \times 2 \times \dots \times 2}_{n}$ array of only zeroes, which is contained precisely once by definition 13. 
+\end{Definition}
+
+\clearpage
+
+\noindent
+For $n=1$ through 3, we know $\left(\prod_{i=1}^{n-1} 2^{2^i}\right) \times 4$ De Bruijn arrays of binary $2^n$-cube sub-arrays exist. 
+
+\null 
+
+\noindent
+If $n=1$, $\left(\prod_{i=1}^{n-1} 2^{2^i}\right) \times 4 = 4$. The four-length De Bruijn sequence $(0011)$, which contains as subsequences 00, 01, 10, and 11, is such a De Bruijn array. 
+
+\null 
+
+\noindent
+If $n=2$, $\left(\prod_{i=1}^{n-1} 2^{2^i}\right) \times 4 = 4 \times 4$. The Clockwise and Counterclockwise arrays, which contain the 16 binary $2 \times 2$ arrays, are such De Bruijn arrays. 
+
+\null 
+
+\noindent
+If $n = 3$, $\left(\prod_{i=1}^{n-1} 2^{2^i}\right) \times 4 = 16 \times 4 \times 4$. The array in figure \ref{theWhorl}, which contains the 256 $b$-cubes, is such a De Bruijn array. Having produced these initial cases, move to the inductive step.
+
+\subsection{Constructing an $(n+1)D$ De Bruijn Array}
+
+\noindent
+Presume $[N]$ is a $\left(\prod_{i=1}^{n-1} 2^{2^i}\right) \times 4$ De Bruijn array of binary $2^n$-cube sub-arrays. Let $[M]$ be a $2^{2^{n}} \times 2^{2^{n-1}} \times \dots \times 2^{2^2} \times 2^{2^1} \times 4$, $n+1^{th}$ dimensional hyper-toroidal array whose elements are yet unassigned, and let $M \in [M]$. For all integers $i$ with $0 \leq i \leq 2^{2^n}-1$, denote by $M_i$ the $i^{th}$ ``Instance'' in $M$. 
+
+\null
+
+\noindent
+Over the same index $i$ define $n$-tuples $(x_{i,1},x_{i,2},\dots, x_{i,n})$ so that $0 \leq x_{i,n} \leq 3$, and for $j$ from 1 to $n-1$, $x_{i,j}$ is an integer with $0 \leq x_{i,j} \leq 2^{2^{(n-j)}}-1$. Ensure also that for each integer $k$ with $0 \leq i \neq k \leq 2^{2^n}-1$, at least one of $x_{i,1} \neq x_{k,1}$, $x_{i,2} \neq x_{k,2}$, $\dots,$ or $x_{i,n} \neq x_{k,n}$. The cardinality of the set of all possible $(x_{i,1},x_{i,2},\dots, x_{i,n})$ is therefore equal to the product of $N$'s dimensions.
+
+$$2^{2^{n-1}} \times 2^{2^{n-2}} \times \dots \times 2^{2^2} \times 2^{2^1} \times 4 = 2^{2^n}.$$ 
+
+\noindent
+So, the set of all $n$-tuples $(x_{i,1},x_{i,2},\dots, x_{i,n})$ is an ordering of precisely one copy each of $(0,0,\dots,0)$, $\dots$, $(2^{2^{n-1}}-1, 2^{2^{n-2}}-1, \dots, 2^{2^1}-1, 3)$. Reorder and relabel so that $(x_{0,1},x_{0,2},\dots, x_{0,n})=(0,0,\dots,0)$ without loss of generality due to $[M]$'s hyper-toroidal shape.
+
+\null 
+
+\noindent
+Let $M_0$ be congruent to the $N \in [N]$ which has the origin in its former, front, top, left, etcetera corner. For each subsequent instance of $M$, assign
+
+$$M_{i+1,a_1, a_2, \dots, a_n} = M_{i, b_1, b_2, \dots, b_n}$$
+
+\noindent
+with $b_j = a_j - x_{i,j}$ mod $2^{2^{n-j}}$ for $j$ from 1 to $n-1$, while $b_{n} = a_{n} - x_{i,n}$ mod 4. 
+
+\clearpage
+\subsection{Proving that $[M]$ satisfies Definition 13}
+
+\noindent
+Extending Lemma 2 from page 21 relates $M_0$, $M_{2^{2^n}-1}$, and $(x_{{2^{2^n}-1},1},x_{{2^{2^n}-1},2},\dots, x_{{2^{2^n}-1},n})$.
+
+\null 
+
+\begin{Lemma}
+$M_{0, a_1, a_2, \dots, a_n} = M_{2^{2^n}-1,b_1, b_2, \dots, b_n}$ with $b_j = a_j - x_{2^{2^n}-1,j}$ mod $2^{2^{n-j}}$ for $j$ from 1 to $n-1$, and $b_{n} = a_{n} - x_{2^{2^n}-1,n}$ mod 4. 
+\end{Lemma}
+
+\null 
+
+\begin{proof}
+As in Lemma 2.
+\end{proof}
+
+\null 
+
+\noindent
+Now that the relationship between any two adjacent instances of $[M]$ is guaranteed to be unique, the following Lemmas assess the uniqueness of the $\underbrace{2 \times 2 \times \dots \times 2}_{n}$ arrays of 0s and 1s they contain. 
+
+\null 
+
+\begin{Lemma}
+All $2^{2^n}$ of the $\underbrace{2 \times 2 \times \dots \times 2}_{n}$ arrays contained in $(M_i \times M_{i+1 \text{ mod } 2^{2^n}})$ are distinct for all $0 \leq i \leq 2^{2^n} -1$.
+\end{Lemma}
+
+\null 
+
+\begin{proof}
+As in Lemma 3.
+\end{proof}
+
+\null 
+
+\begin{Lemma}
+For integers $i,j$ with $0 \leq i \neq j \leq 2^{2^n}-1$, $(M_i \times M_{i+1 \text{ mod } 2^{2^n}})$ and $(M_j, M_{j+1 \text{ mod } 2^{2^n}})$ share none of the $\underbrace{2 \times 2 \times \dots \times 2}_{n}$ arrays they contain.
+\end{Lemma}
+
+\null 
+
+\begin{proof}
+As in Lemma 4.
+\end{proof}
+
+\null 
+
+\begin{Theorem}
+$[M]$ satisfies definition 13 as a $\left(\prod_{i=1}^{n} 2^{2^i}\right) \times 4$ De Bruijn array of binary $2^{n+1}$-cube sub-arrays.
+\end{Theorem}
+
+\null 
+
+\begin{proof}
+$[M]$ is a $2^{2^{n}} \times 2^{2^{n-1}} \times \dots \times 2^{2^2} \times 2^{2^1} \times 4$, $n+1^{th}$ dimensional hyper-toroidal array, so it has the size and shape dictated by Definition 13 using $n+1$ in place of $n$. 
+
+\null 
+
+\noindent 
+Lemmas 6 and 7 guarantee $2^{2^n}$ distinct $\underbrace{2 \times 2 \times \dots \times 2}_{n}$ arrays of 0s and 1s in each of its $2^{2^{n}}$ pairs of instances, so there are $2^{2^n} \times 2^{2^{n}} = 2^{2^{n+1}}$ distinct $\underbrace{2 \times 2 \times \dots \times 2}_{n+1}$ sub-arrays contained in $[M]$. Each space in the sub-array may be filled with either 0 or 1, so there are exactly $2^{2^{n+1}}$ possible $\underbrace{2 \times 2 \times \dots \times 2}_{n+1}$ sub-arrays. $[M]$ must contain each one precisely once. 
+ \end{proof}
+ 
+\null 
+
+\noindent
+Having shown several base cases in lower dimensions, and using this as the inductive step, we verify that $2^{2^{n-1}} \times 2^{2^{n-2}} \times \dots \times 2^{2^2} \times 2^{2^1} \times 4$ De Bruijn arrays of binary $2^n$-cube sub-arrays exist for all $n\in \mathbb{N}$. This specific case of the De Bruijn sequence is generalizable to any finite number of dimensions. 
+
+\null 
+
+\noindent
+In addition, the inductive nature of the construction implies a lower bound for the quantity of $\left(\prod_{i=1}^{n-1} 2^{2^i}\right) \times 4$ De Bruijn arrays of $2^n$-cube sub-arrays. Consider that we found $2 \times 15!$ distinct $16 \times 4 \times 4$ De Bruijn arrays of $b$-cubes in section 4.1. Using any of these examples as $[N]$ in the inductive proof above with $n=3$, we may permute the set of all $3$-tuples $(x_{i,1}, x_{i,2}, x_{i,3})$ in $(2^{2^3}-1)!$ ways with $(x_{0,1},x_{0,2}, x_{0,3}) = (0,0,0)$ without loss of generality. So there are at least 
+
+$$2 \times 15! \times 255! \approx 8.7636 \times 10^{516}$$
+
+\noindent
+distinct ways to construct $[M]$, which has dimension $n+1=4$. Applying the inductive step, for any $n\geq 3$ we are guaranteed at least 
+
+$$2 \times \left(\prod_{i=2}^n (2^{2^{i}}-1)! \right)$$
+
+\noindent
+$\left( \prod_{i=1}^{n-1} 2^{2^i} \right) \times 4$ De Bruijn arrays of binary $2^n$-cube sub-arrays. 
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+\clearpage
+\section{Applications of De Bruijn Sequences and Torii}
+
+\subsection{Mapping of Space and $3D$ Position Tracking}
+\textit{Locating Patterns in the De Bruijn Torus} notes the use of De Bruijn torii as a means of locating position in $2D$ space\cite{Location}. For an abstract example, in a room with a De Bruijn array printed on the floor, a robot could determine its position by comparing the pattern on the floor beneath it to an internal map of the room. This general concept is used to detect positions in space for projective touchscreen displays and digital paper. 
+
+\null 
+
+\noindent
+$3D$ De Bruijn arrays expand the theoretical utility of the practice. Instead of a robot confined to the floor, imagine a flying drone capable of movement in three dimensions in a warehouse. We might suspend black and white markers in the warehouse in the shape of $F \in [F]$, any $16 \times 4 \times 4$ De Bruijn array of $b$-cubes. Then the drone could auto-self-locate by finding the pattern of the eight markers surrounding it in an internal map of $F$. 
+
+\null 
+
+\noindent
+Using the same reasoning one might imagine a $3D$ ``touchscreen,'' a holographic $3D$ De Bruijn array with which a person interacts using a stylus. The stylus senses its location by detecting the combination of lights at its tip and finding that combination uniquely in the De Bruijn array.
+
+
+
+\subsection{DNA Sequencing and Efficient Packing}
+
+In shotgun DNA sequencing and genome assembly, lengths of one-dimensional genetic material are cut into pieces and the original DNA strand must be reconstituted. One algorithmic solution to this problem supposes that out of all the DNA strings obtainable by combining the pieces, the strings with the least repetition are probably the most accurate recreations of the original DNA. Applying this solution utilizes concepts from graph theory similar to the construction of a De Bruin sequence outlined in section 1. The process of making a De Bruijn sequence requires merging sequences of elements on their areas of overlap, a useful tactic in DNA sequencing\cite{DNAsequencing}.
+
+\null
+
+\noindent
+With analogues to De Bruijn sequences existent in any finite number of dimensions, one might imagine an algorithm to combine multidimensional noise in a compact way. The process of finding overlapping or shared regions in data to merge the data in a maximally efficient space could be useful in any number of dimensions. 
+
+\clearpage
+
+\subsection{Error Detection and Correction}
+
+If any single binary element of $[F]$, a $16 \times 4 \times 4$ De Bruijn array of $b$-cubes, were to be inverted from a 0 to a 1 or vice versa, the properties of the De Bruijn array could be used to detect the change and reverse it. Compare this to Hamming Codes and error-detecting/correcting codes which ensure text messages are correctly transmitted even with messy cell signals\cite{Parker}. Before we list rules which turn `wounded' De Bruijn arrays into sudoku-like puzzles, we present an example method for encoding short messages in $16 \times 4 \times 4$ De Bruijn arrays of $b$-cubes. 
+
+\null 
+
+\noindent
+As $2^{41} = 2199023255552 < 2 \times 15!$, it should be possible to injectively map 41-bit strings onto $16 \times 4 \times 4$ De Bruijn arrays of $b$-cubes (so that the arrays could be translated back into the strings they represent). Using 256 bits to represent 41 bits is inefficient, but if the De Bruijn array allows for powerful enough data-restoration algorithms, it may be worth the extra storage costs.
+
+\null 
+
+\noindent
+For efficiency's sake, the process of translating binary strings to arrays and back should not take much computational time. The Appendix contains several Python functions which perform the task of encoding and decoding messages quickly using a binary tree `search' algorithm, but only for binary strings of length 35 instead of 41 because of its methodology. The following algorithm describes the Python's methodology:
+
+\null 
+
+\noindent
+Let $B$ be a binary string with length 35. If the first digit of $B$ is 0, we will make $[F]$ a $16 \times 4 \times 4$ De Bruijn arrays of $b$-cubes in the manner specified in section 5.1 using the Clockwise array. If the first digit of $B$ is 1, we will use the Counterclockwise array to construct $[F]$. Having made this decision, remove the first element from $B$.
+
+\null 
+
+\noindent
+We assume the offset pair $(0,0)$ is first without loss of generality due to $[F]$'s hyper-toroidal shape. Then make an ordered list of the unused pairs $(0,1),(0,2),(0,3),(1,0),(1,1),\dots, (3,3)$ and call the list $unusedPairs$. Until $unusedPairs$ is empty, repeat the following task:
+
+\null 
+
+\noindent
+Divide $unusedPairs$ into two halves in the middle, order-wise, including the central element in the second half if there are an odd number of elements. If the first digit of $B$ is 0, focus on the first half of $unusedPairs$. If the first digit of $B$ is 1, focus on the second half. Split the specified half in half again and focus on one half using the second digit of $B$, then split that half in half again, repeating until the list in question has only one element in it. Remove that element from $unusedPairs$ and use it to construct the next layer of $[F].$ Also remove the digits of $B$ used to select that element.
+
+\null 
+
+\noindent
+When $B$ is empty, $[F]$ will be a $16 \times 4 \times 4$ De Bruijn array of $b$-cubes which implicitly conveys $B$'s message to anyone who knows the order of the original $unusedPairs$ list.
+
+\null 
+
+\noindent
+For example, the phrase ``Help!'' in 7-bit ASCII is 1001000 1100101 1101100 1110000 0100001. Using Python functions from the appendix, makePermutation([1,0,0,1,0,0,0,1,1,0,0,1,0,1,1,1,0,1,1,0,0,1,1,1,0,0,0,0,0,1,0,0,0,0,1]) produces [`Counterclockwise', (0, 0), (0, 3), (0, 1), (3, 1), (1, 2), (3, 3), (2, 0), (1, 0), (3, 0), (0, 2), (1, 1), (2, 3), (1, 3), (2, 1), (3, 2), (2, 2)], which describes a $16 \times 4 \times 4$ De Bruijn array of $b$-cubes. Feeding that list into decodePermutation() produces 1001000 1100101 1101100 1110000 0100001, or ``Help!'' In this manner, short messages can be stored in an error resistant format and later recovered.
+
+\null
+
+\noindent
+If $[F]$ is a De Bruijn array with form as described in Section 5.1, but some elements are inverted, the following rules can help detect and correct the errors.
+
+\begin{Rule}
+Every layer of $[F]$ is the Clockwise or Counterclockwise array.
+\end{Rule}
+
+\noindent
+If we may determine whether $[F]$ uses the Clockwise or Counterclockwise array, this rule allows us to reform any wounded layer which still has a $2 \times 2$ square of 0s and 1s which is known to be correct (or, indeed, any shape and quantity of correct elements that uniquely determines the placement of the Clockwise or Counterclockwise array forming that layer). 
+
+\null 
+
+\noindent
+As each layer is congruent to the Clockwise or Counterclockwise array, each row and column of each layer of $[F]$ must contain three 0s and a 1, or three 1s and a 0. This can help detect errors and potentially correct those errors by, for example, inverting the element at the intersection of a row and a column in violation of this rule.
+
+\begin{Rule}
+$[F]$ contains each $b$-cube precisely once.
+\end{Rule}
+
+\noindent
+This rule (from definition 9) can fix wounded values using information elsewhere in $[F]$. If, for $s,t,u,v,w,x,y,z \in \{0,1\}$, $[F]$ contains the $b$-cubes
+
+$$\left(\begin{bmatrix}
+s & t\\
+u & v\\
+\end{bmatrix} \times \begin{bmatrix}
+w & x\\
+y & z\\
+\end{bmatrix}\right), \quad \left(\begin{bmatrix}
+s & t\\
+u & v\\
+\end{bmatrix} \times \begin{bmatrix}
+w & x\\
+y & z\\
+\end{bmatrix}\right),$$
+
+$$\left(\begin{bmatrix}
+s & t\\
+1-u & v\\
+\end{bmatrix} \times \begin{bmatrix}
+w & x\\
+y & z\\
+\end{bmatrix}\right), \quad \left(\begin{bmatrix}
+s & t\\
+u & 1-v\\
+\end{bmatrix} \times \begin{bmatrix}
+w & x\\
+y & z\\
+\end{bmatrix}\right),$$
+
+$$\left(\begin{bmatrix}
+s & t\\
+u & v\\
+\end{bmatrix} \times \begin{bmatrix}
+1-w & x\\
+y & z\\
+\end{bmatrix}\right), \quad \left(\begin{bmatrix}
+s & t\\
+u & v\\
+\end{bmatrix} \times \begin{bmatrix}
+w & 1-x\\
+y & z\\
+\end{bmatrix}\right),$$
+
+$$\left(\begin{bmatrix}
+s & t\\
+u & v\\
+\end{bmatrix} \times \begin{bmatrix}
+w & x\\
+1-y & z\\
+\end{bmatrix}\right), \text{ and } \left(\begin{bmatrix}
+s & t\\
+u & v\\
+\end{bmatrix} \times \begin{bmatrix}
+w & x\\
+y & 1-z\\
+\end{bmatrix}\right),$$
+
+\noindent
+we might check if either of the duplicated copies of $\left(\begin{bmatrix}
+s & t\\
+u & v\\
+\end{bmatrix} \times \begin{bmatrix}
+w & x\\
+y & z\\
+\end{bmatrix}\right)$ should actually be $\left(\begin{bmatrix}
+s & 1-t\\
+u & v\\
+\end{bmatrix} \times \begin{bmatrix}
+w & x\\
+y & z\\
+\end{bmatrix}\right).$ Then, having confirmed a $2\times2$ square of elements on the layer containing errors, rule 1 corrects all errors on the layer.
+
+\null 
+
+\noindent
+Using these rules we turn wounded $16 \times 4 \times 4$ De Bruijn arrays of $b$-cubes into puzzles to be solved. In fact, if all elements are totally removed except for a $2 \times 2$ square of elements on each layer (so 75\% of the data is lost) then if we know whether $[F]$ used Clockwise or Counterclockwise layers, the whole array may be repaired using rule 1 alone. 
+
+
+
+
+\section{Further Questions}
+
+\begin{itemize}
+    \item Are there $16 \times 4 \times 4$ De Bruijn arrays of $b$-cubes which do not have the form prescribed in section 5.1?  We conjecture that there are in section 5.3.
+    \item Can De Bruijn arrays of $b$-cubes have shape other than $16 \times 4 \times 4$?
+    \item Can stacking De Bruijn tori be used to generate $3D$ De Bruijn hyper-tori for sub-arrays of different sizes, shapes, or number of elements? Does the stacking-with-offsets algorithm generalize to more complicated cases?
+    \item A common question is the minimum time required to locate specific sequences in a De Bruijn sequence. What is the minimum time required to locate an arbitrary cube in a $16 \times 4 \times 4$ De Bruijn array of $b$-cubes? Could the structure in three dimensions allow for efficient search algorithms?
+\end{itemize}
+
+
+
+
+\clearpage
+%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\section{Appendix}
+
+\subsection{Encoding and Decoding messages in De Bruijn Arrays (Section 7.4.1)}
+
+\begin{verbatim}
+import math
+  
+################### 
+# Recursive step for the makePermutation function
+  
+def nextStep(bitString, pairList,i): 
+  if(len(pairList)==1): # If passed a list of length 1, returns its element as the answer
+    return([pairList[0],i])
+  elif(bitString[0]==0): # Otherwise, cuts the list of remaining permutations in half
+    nextString = bitString[1:len(bitString)]
+    return(nextStep(nextString,pairList[:math.floor(len(pairList)/2)],i+1))
+  else: # Which half is used in the recursive step is based on the sequence of 0s and 1s
+    nextString = bitString[1:len(bitString)]
+    return(nextStep(nextString,pairList[math.ceil(len(pairList)/2):],i+1))
+
+###################
+# Accepts 35-digit string, returns a list unique to that string beginning with
+# ``Clockwise'' or ''Counterclockwise, then (0,0), then ordering remaining offset pairs,
+# specifying a specific 16*4*4 De Bruijn array of cubes
+
+def makePermutation(bitString):
+  ourPermutation = []
+  unusedPairs = [(0,1),(0,2),(0,3),(1,0),(1,1),(1,2),(1,3),(2,0),(2,1),(2,2),(2,3),(3,0),
+  (3,1),(3,2),(3,3)] # List of the 15 elements to be organized
+  
+  if(bitString.pop(0)==0):
+    ourPermutation.append("Clockwise")
+  else:
+    ourPermutation.append("Counterclockwise") # First digit chooses direction of the swirl
+    
+  ourPermutation.append((0,0)) # WLOG, use this offset first
+  
+  while(unusedPairs != []): 
+    nextElement = nextStep(bitString,unusedPairs,0) # Recursive step
+    ourPermutation.append(nextElement[0])
+    unusedPairs.remove(nextElement[0])
+    bitString = bitString[nextElement[1]:]
+    
+  print(ourPermutation)
+  return(ourPermutation)
+  
+
+
+###################
+# Recursive step for the decodePermutation function
+def stepReverser(element,pairList,toAppend):
+  if(len(pairList)==1): # If the list is finished, return the constructed string
+    return(toAppend)
+  # If element is in first half, append 0
+  elif(pairList.index(element) < math.floor(len(pairList)/2)): 
+    toAppend.append(0) 
+    return(stepReverser(element,pairList[:math.floor(len(pairList)/2)],toAppend))
+  else: # If element is in second half, append 1
+    toAppend.append(1)
+    return(stepReverser(element,pairList[math.ceil(len(pairList)/2):],toAppend))
+
+###################
+# Accepts a list just like makePermutation outputs
+# and returns the (first 35 digits of) the binary string which produced it
+def decodePermutation(permutation):
+  theBitString = []
+  
+  if(permutation[0] == "Clockwise"):
+    theBitString.append(0)
+  else:
+    theBitString.append(1)
+    
+  permutation = permutation[2:] # Already processed first element, ignore (0,0)
+    
+  asItWas = [(0,1),(0,2),(0,3),(1,0),(1,1),(1,2),(1,3),(2,0),(2,1),(2,2),(2,3),(3,0),
+  (3,1),(3,2),(3,3)]
+  
+  while(asItWas != []):
+    nextDigits = stepReverser(permutation[0],asItWas,[])
+    for i in nextDigits:
+      theBitString.append(i)
+    asItWas.remove(permutation[0])
+    permutation = permutation[1:]
+    
+  print(theBitString)
+\end{verbatim}
+
+\clearpage
+\addcontentsline{toc}{section}{References}
+
+\begin{thebibliography}{9}
+
+\bibitem{Construction} 
+Alexander Bogomolny, \underline{Existence of the de Bruijn Cycles via Graphs} from \textit{Interactive Mathematics Miscellany and Puzzles}.
+http://www.cut-the-knot.org/arithmetic/combinatorics/deBruijnCycles.shtml. Accessed 21 December 2016. (This is the web-author's stated preference for citation notation.) 
+
+\bibitem{B2}
+Eggen, Bernd R. (1990). ``The Binatorix B2''. \textit{Private communication}.
+
+\bibitem{Location}
+Horan, Victoria, and Brett Stevens. ``Locating Patterns in the De Bruijn Torus.'' \textit{Discrete Mathematics} 339.4 (2015): 1274-282. Web. 11 Feb. 2017. $<$https://arxiv.org/pdf/1505.04065.pdf$>$.
+
+\bibitem{Sequences} 
+Hurlbert, Glenn, and Garth Isaak. ``On the De Bruijn Torus Problem.'' \textit{Journal of Combinatorial Theory} A 64.1 (1993): 50-62. \textit{Science Direct}. Web. 21 Dec. 2016. $<$http://www.sciencedirect.com/science/article/pii/009731659390087O$>$. 
+
+\bibitem{Parker}
+Parker, Matt. \textit{Things to Make and Do in the Fourth Dimension}. London: Penguin, 2015. Print.
+
+\bibitem{Genetics} Perry, Nick. ``De Bruijn Sequences.'' Data Genetics. 2 Oct. 2013. Web. 11 Jan. 2017. $<$http://www.datagenetics.com/blog/october22013/index.html$>$.
+
+\bibitem{QR Codes}
+Perry, Nick. ``Wounded QR Codes.'' \textit{Data Genetics}. 1 Nov. 2013. Web. 11 Feb. 2017. $<$http://datagenetics.com/blog/november12013/index.html$>$.
+
+\bibitem{DNAsequencing}
+Zerbino, Daniel Robert. ``Genome Assembly and Comparison Using De Bruijn Graphs.'' \textit{Genome Assembly and Comparison Using De Bruijn Graphs, University of Cambridge}, 2009. $<$www.ebi.ac.uk/sites/ebi.ac.uk/files/shared/documents/phdtheses/daniel\_zerbino.pdf$>$.
+
+
+
+
+\end{thebibliography}
+
+\end{document}
